@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gestão Rei da Limpeza</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+                <div class="logo-icon">R</div>
+
+                <div class="logo-text">
+                    <strong>Rei da</strong>
+                    <span>Limpeza</span>
+                </div>
+            </div>
+
+
+            <nav class="sidebar-nav">
+
+                <span class="nav-title">MENU</span>
+
+                <button class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">⌂</span>
+                    <span>Dashboard</span>
+                </button>
+
+                <button class="nav-item" data-page="clientes">
+                    <span class="nav-icon">♙</span>
+                    <span>Clientes</span>
+                </button>
+
+                <button class="nav-item" data-page="servicos">
+                    <span class="nav-icon">✓</span>
+                    <span>Serviços</span>
+                </button>
+
+                <button class="nav-item" data-page="agenda">
+                    <span class="nav-icon">□</span>
+                    <span>Agenda</span>
+                </button>
+
+                <button class="nav-item" data-page="funcionarios">
+                    <span class="nav-icon">♙</span>
+                    <span>Funcionários</span>
+                </button>
+
+
+                <span class="nav-title">GESTÃO</span>
+
+                <button class="nav-item" data-page="financeiro">
+                    <span class="nav-icon">R$</span>
+                    <span>Financeiro</span>
+                </button>
+
+                <button class="nav-item" data-page="relatorios">
+                    <span class="nav-icon">▤</span>
+                    <span>Relatórios</span>
+                </button>
+
+            </nav>
+
+
+            <div class="sidebar-footer">
+
+                <div class="user-avatar">
+                    A
+                </div>
+
+                <div class="user-info">
+                    <strong>Administrador</strong>
+                    <span>Gestor</span>
+                </div>
+
+                <button class="logout-button">
+                    ⋮
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main">
+
+            <!-- TOPBAR -->
+            <header class="topbar">
+
+                <div class="mobile-logo">
+                    <div class="logo-icon">R</div>
+                    <strong>Rei da Limpeza</strong>
+                </div>
+
+                <div class="topbar-actions">
+
+                    <button class="notification-button">
+                        ♢
+                        <span></span>
+                    </button>
+
+                    <div class="topbar-user">
+
+                        <div class="user-avatar">
+                            A
+                        </div>
+
+                        <div>
+                            <strong>Administrador</strong>
+                            <span>Gestor</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+<!-- CONTEÚDO -->
+<section class="content">
+
+    <div class="page-header">
+
+        <div>
+            <span class="page-breadcrumb">Visão geral</span>
+            <h1>Dashboard</h1>
+            <p>Acompanhe o desempenho do Rei da Limpeza.</p>
+        </div>
+
+    </div>
+
+    <div id="page-content"></div>
+
+</section>
+        </main>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
