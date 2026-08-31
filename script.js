@@ -1,3 +1,13 @@
+const SUPABASE_URL = 'https://maovjhazdgnnhoazbsbv.supabase.co';
+
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ozR2yvm9QTVcjR0_lskJaQ_BC9xQfJb';
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+);
+
+
 const navItems = document.querySelectorAll(".nav-item");
 
 const pageTitle = document.querySelector(".page-header h1");
@@ -32,11 +42,6 @@ const pages = {
         description: "Visualize e organize os próximos serviços."
     },
 
-    funcionarios: {
-        title: "Funcionários",
-        breadcrumb: "Gestão",
-        description: "Gerencie os funcionários do Rei da Limpeza."
-    },
 
     financeiro: {
         title: "Financeiro",
@@ -56,30 +61,33 @@ const pages = {
 // CLIENTES
 // =====================================================
 
-function pegarClientes() {
+async function pegarClientes() {
 
-    const dados = localStorage.getItem("clientesReiDaLimpeza");
+    const { data, error } = await supabaseClient
+        .from("clientes")
+        .select("*");
 
-    if (!dados) {
+    if (error) {
+        console.error("Erro ao carregar clientes:", error);
         return [];
     }
 
-    try {
-        return JSON.parse(dados);
-    } catch (erro) {
-        console.error("Erro ao carregar clientes:", erro);
-        return [];
-    }
+    return data || [];
 }
 
 
-function salvarClientes(clientes) {
+async function salvarClientes(clientes) {
 
-    localStorage.setItem(
-        "clientesReiDaLimpeza",
-        JSON.stringify(clientes)
-    );
+    const { error } = await supabaseClient
+        .from("clientes")
+        .upsert(clientes);
 
+    if (error) {
+        console.error("Erro ao salvar clientes:", error);
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -196,7 +204,7 @@ function renderClientes() {
 // TABELA
 // =====================================================
 
-function atualizarTabelaClientes(busca = "") {
+async function atualizarTabelaClientes(busca = "") {
 
     const tabela = document.querySelector("#clientes-tabela");
 
@@ -205,7 +213,7 @@ function atualizarTabelaClientes(busca = "") {
     }
 
 
-    const clientes = pegarClientes();
+   const clientes = await pegarClientes();
 
     const termo = busca.toLowerCase().trim();
 
@@ -351,9 +359,9 @@ function atualizarTabelaClientes(busca = "") {
 // NOVO / EDITAR CLIENTE
 // =====================================================
 
-function abrirFormularioCliente(id = null) {
+async function abrirFormularioCliente(id = null) {
 
-    const clientes = pegarClientes();
+    const clientes = await pegarClientes();
 
     const cliente = id
         ? clientes.find(cliente => cliente.id === id)
@@ -526,7 +534,7 @@ function abrirFormularioCliente(id = null) {
 
     modal
         .querySelector("#cliente-form")
-        .addEventListener("submit", (event) => {
+        .addEventListener("submit", async (event) => {
 
             event.preventDefault();
 
@@ -556,7 +564,7 @@ function abrirFormularioCliente(id = null) {
             }
 
 
-            const clientesAtuais = pegarClientes();
+            const clientesAtuais = await pegarClientes();
 
 
             if (cliente) {
@@ -586,7 +594,7 @@ function abrirFormularioCliente(id = null) {
                     };
 
 
-                    salvarClientes(clientesAtuais);
+                    await salvarClientes(clientesAtuais);
 
                 }
 
@@ -609,7 +617,7 @@ function abrirFormularioCliente(id = null) {
                 });
 
 
-                salvarClientes(clientesAtuais);
+                await salvarClientes(clientesAtuais);
 
             }
 
@@ -639,9 +647,9 @@ function editarCliente(id) {
 // EXCLUIR
 // =====================================================
 
-function excluirCliente(id) {
+async function excluirCliente(id) {
 
-    const clientes = pegarClientes();
+    const clientes = await pegarClientes();
 
     const cliente = clientes.find(
         cliente => Number(cliente.id) === Number(id)
@@ -707,24 +715,6 @@ navItems.forEach(button => {
 
             renderAgenda();
 
-        } else if (page === "funcionarios") {
-
-            pageContent.innerHTML = `
-                <div class="empty-page">
-
-                    <div class="empty-icon">
-                        ${getPageIcon(page)}
-                    </div>
-
-                    <h2>Funcionários</h2>
-
-                    <p>
-                        Essa área será desenvolvida na próxima etapa.
-                    </p>
-
-                </div>
-            `;
-
         } else if (page === "financeiro") {
 
             pageContent.innerHTML = `
@@ -777,7 +767,6 @@ function getPageIcon(page) {
 
         servicos: "✓",
         agenda: "□",
-        funcionarios: "♙",
         financeiro: "R$",
         relatorios: "▤"
 
@@ -792,10 +781,10 @@ function getPageIcon(page) {
 // DASHBOARD
 // =====================================================
 
-function renderDashboard() {
+ async function renderDashboard() {
 
-    const clientes = pegarClientes();
-    const servicos = pegarServicos();
+    const clientes = await pegarClientes();
+    const servicos = await pegarServicos();
 
     const hoje = new Date();
 
@@ -1186,18 +1175,24 @@ function renderDashboard() {
 
 
                                             <div
-                                                class="dashboard-service-info"
+                                           class="dashboard-service-info"
                                             >
 
-                                                <strong>
-                                                    ${nomeCliente}
+                                               <strong>
+                                                   ${nomeCliente}
                                                 </strong>
 
                                                 <span>
-                                                    ${servico.tipo}
+                                                   ${servico.tipo}
                                                 </span>
 
-                                            </div>
+                                                <span>
+                                                    R$ ${Number(servico.valor)
+                                                    .toFixed(2)
+                                                    .replace(".", ",")}
+                                                </span>
+
+                                               </div>
 
 
                                             <span
@@ -1464,19 +1459,24 @@ function renderDashboard() {
                                         </div>
 
 
-                                        <div
-                                            class="dashboard-service-info"
-                                        >
+                                       <div
+                                    class="dashboard-service-info"
+>
 
-                                            <strong>
-                                                ${nomeCliente}
-                                            </strong>
+                                      <strong>
+                                          ${nomeCliente}
+                                      </strong>
 
-                                            <span>
-                                                ${servico.tipo}
-                                            </span>
+                                         <span>
+                                           ${servico.tipo}
+                                         </span>
 
-                                        </div>
+                                             <strong>
+                                               R$ ${Number(servico.valor || 0)
+                                                  .toFixed(2)
+                                                 .replace(".", ",")}
+                                             </strong>
+                                     </div>
 
 
                                         <span
@@ -1540,30 +1540,64 @@ function renderDashboard() {
 // SERVIÇOS
 // =====================================================
 
-function pegarServicos() {
+async function pegarServicos() {
 
-    const dados = localStorage.getItem("servicosReiDaLimpeza");
+    const { data, error } = await supabaseClient
+        .from("servicos")
+        .select("*");
 
-    if (!dados) {
+    if (error) {
+        console.error("Erro ao carregar serviços:", error);
         return [];
     }
 
-    try {
-        return JSON.parse(dados);
-    } catch (erro) {
-        console.error("Erro ao carregar serviços:", erro);
-        return [];
-    }
+    return (data || []).map(servico => ({
+        id: servico.id,
+        clienteId: servico.cliente_id,
+        tipo: servico.tipo,
+        data: servico.data
+            ? servico.data.split("-").reverse().join("/")
+            : "",
+        horario: servico.horario,
+        valor: servico.valor,
+        status: servico.status
+    }));
 }
 
+async function salvarServicos(servicos) {
 
-function salvarServicos(servicos) {
+    const dados = servicos.map(servico => {
 
-    localStorage.setItem(
-        "servicosReiDaLimpeza",
-        JSON.stringify(servicos)
-    );
+        const partesData = servico.data.split("/");
 
+        const dataBanco =
+            partesData.length === 3
+                ? `${partesData[2]}-${partesData[1]}-${partesData[0]}`
+                : servico.data;
+
+        return {
+            id: servico.id,
+            cliente_id: servico.clienteId,
+            tipo: servico.tipo,
+            data: dataBanco,
+            horario: servico.horario,
+            valor: servico.valor,
+            status: servico.status
+        };
+
+    });
+
+    const { error } = await supabaseClient
+        .from("servicos")
+        .upsert(dados);
+
+    if (error) {
+        console.error("Erro ao salvar serviços:", error);
+        alert("Erro ao salvar serviço.");
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -1571,7 +1605,7 @@ function salvarServicos(servicos) {
 // TELA DE SERVIÇOS
 // =====================================================
 
-function renderServicos() {
+async function renderServicos() {
 
     pageContent.innerHTML = `
 
@@ -1655,7 +1689,7 @@ function renderServicos() {
     `;
 
 
-    atualizarTabelaServicos();
+    await atualizarTabelaServicos();
 
 
     document
@@ -1682,7 +1716,7 @@ function renderServicos() {
 // TABELA DE SERVIÇOS
 // =====================================================
 
-function atualizarTabelaServicos(busca = "") {
+async function atualizarTabelaServicos(busca = "") {
 
     const tabela = document.querySelector("#servicos-tabela");
 
@@ -1691,8 +1725,8 @@ function atualizarTabelaServicos(busca = "") {
     }
 
 
-    const servicos = pegarServicos();
-    const clientes = pegarClientes();
+    const servicos = await pegarServicos();
+    const clientes = await pegarClientes();
 
     const termo = busca.toLowerCase().trim();
 
@@ -1891,10 +1925,10 @@ function atualizarTabelaServicos(busca = "") {
 // NOVO / EDITAR SERVIÇO
 // =====================================================
 
-function abrirFormularioServico(id = null, origem = "servicos") {
+async function abrirFormularioServico(id = null, origem = "servicos") {
 
-    const servicos = pegarServicos();
-    const clientes = pegarClientes();
+    const servicos = await pegarServicos();
+    const clientes = await pegarClientes();
 
 
    const servico = id !== null
@@ -2008,10 +2042,12 @@ function abrirFormularioServico(id = null, origem = "servicos") {
                         <input
                             type="date"
                             id="servico-data"
-                            value="${servico
-                                ? converterDataParaInput(servico.data)
-                                : ""
-                            }"
+                           value="${servico
+    ? converterDataParaInput(servico.data)
+    : origem === "agenda"
+        ? converterDataParaInput(formatarDataAgenda(dataAgendaAtual))
+        : ""
+}"
                             required
                         >
 
@@ -2185,7 +2221,7 @@ function abrirFormularioServico(id = null, origem = "servicos") {
 
     modal
         .querySelector("#servico-form")
-        .addEventListener("submit", event => {
+        .addEventListener("submit", async event => {
 
             event.preventDefault();
 
@@ -2235,7 +2271,7 @@ function abrirFormularioServico(id = null, origem = "servicos") {
             const data = formatarData(dataInput);
 
 
-            const servicosAtuais = pegarServicos();
+            const servicosAtuais = await pegarServicos();
 
 
         if (servico) {
@@ -2262,7 +2298,7 @@ function abrirFormularioServico(id = null, origem = "servicos") {
 
     };
 
-    salvarServicos(servicosAtuais);
+    await salvarServicos(servicosAtuais);
 
 } else {
 
@@ -2285,7 +2321,7 @@ function abrirFormularioServico(id = null, origem = "servicos") {
                 });
 
 
-                salvarServicos(servicosAtuais);
+                await salvarServicos(servicosAtuais);
 
             }
 
@@ -2318,9 +2354,9 @@ function editarServico(id) {
 // EXCLUIR SERVIÇO
 // =====================================================
 
-function excluirServico(id) {
+async function excluirServico(id) {
 
-    const servicos = pegarServicos();
+    const servicos = await pegarServicos();
 
     const servico = servicos.find(
         servico => Number(servico.id) === Number(id)
@@ -2330,7 +2366,7 @@ function excluirServico(id) {
         return;
     }
 
-    const clientes = pegarClientes();
+    const clientes = await pegarClientes();
 
     const cliente = clientes.find(
         cliente => Number(cliente.id) === Number(servico.clienteId)
@@ -2523,7 +2559,7 @@ function renderAgenda() {
 // ATUALIZAR AGENDA
 // =====================================================
 
-function atualizarAgenda() {
+async function atualizarAgenda() {
 
     const container =
         document.querySelector("#agenda-servicos");
@@ -2533,8 +2569,8 @@ function atualizarAgenda() {
     }
 
 
-    const servicos = pegarServicos();
-    const clientes = pegarClientes();
+    const servicos = await pegarServicos();
+    const clientes = await pegarClientes();
 
 
     const dataSelecionada =
@@ -2793,9 +2829,9 @@ function atualizarAgenda() {
 // EXCLUIR SERVIÇO PELA AGENDA
 // =====================================================
 
-function excluirServicoAgenda(id) {
+async function excluirServicoAgenda(id) {
 
-    const servicos = pegarServicos();
+    const servicos = await pegarServicos();
 
     const servico = servicos.find(
         servico =>
@@ -2806,7 +2842,7 @@ function excluirServicoAgenda(id) {
         return;
     }
 
-    const clientes = pegarClientes();
+    const clientes = await pegarClientes();
 
     const cliente = clientes.find(
         cliente =>
@@ -2905,7 +2941,7 @@ function formatarTituloAgenda(data) {
 // MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
 // =====================================================
 
-function abrirConfirmacaoExclusao(id, nomeCliente, origem) {
+async function abrirConfirmacaoExclusao(id, nomeCliente, origem) {
 
     const modal = document.createElement("div");
 
@@ -2972,7 +3008,7 @@ function abrirConfirmacaoExclusao(id, nomeCliente, origem) {
 
     modal
         .querySelector("#cancelar-exclusao")
-        .addEventListener("click", () => {
+        .addEventListener("click", async () => {
 
             modal.remove();
 
@@ -2983,7 +3019,7 @@ function abrirConfirmacaoExclusao(id, nomeCliente, origem) {
 
     modal
     .querySelector("#confirmar-exclusao")
-    .addEventListener("click", () => {
+    .addEventListener("click", async () => {
 
         // =================================================
         // EXCLUIR CLIENTE
@@ -2991,37 +3027,41 @@ function abrirConfirmacaoExclusao(id, nomeCliente, origem) {
 
         if (origem === "clientes") {
 
-            const clientes = pegarClientes();
+    const { error } = await supabaseClient
+        .from("clientes")
+        .delete()
+        .eq("id", id);
 
-            const novosClientes = clientes.filter(
-                cliente =>
-                    Number(cliente.id) !== Number(id)
-            );
+    if (error) {
+        console.error("Erro ao excluir cliente:", error);
+        alert("Erro ao excluir cliente.");
+        return;
+    }
 
-            salvarClientes(novosClientes);
+    modal.remove();
 
-            modal.remove();
+    atualizarTabelaClientes();
 
-            atualizarTabelaClientes();
-
-            return;
-        }
+    return;
+}
 
 
         // =================================================
         // EXCLUIR SERVIÇO
         // =================================================
 
-        const servicos = pegarServicos();
+        const { error } = await supabaseClient
+    .from("servicos")
+    .delete()
+    .eq("id", id);
 
-        const novosServicos = servicos.filter(
-            servico =>
-                Number(servico.id) !== Number(id)
-        );
+if (error) {
+    console.error("Erro ao excluir serviço:", error);
+    alert("Erro ao excluir serviço.");
+    return;
+}
 
-        salvarServicos(novosServicos);
-
-        modal.remove();
+modal.remove();
 
 
         // =================================================
@@ -3034,7 +3074,8 @@ function abrirConfirmacaoExclusao(id, nomeCliente, origem) {
 
         } else {
 
-            atualizarTabelaServicos();
+             
+        await atualizarTabelaServicos();
 
         }
 
