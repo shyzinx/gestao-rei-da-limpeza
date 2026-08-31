@@ -717,21 +717,7 @@ navItems.forEach(button => {
 
         } else if (page === "financeiro") {
 
-            pageContent.innerHTML = `
-                <div class="empty-page">
-
-                    <div class="empty-icon">
-                        ${getPageIcon(page)}
-                    </div>
-
-                    <h2>Financeiro</h2>
-
-                    <p>
-                        Essa área será desenvolvida na próxima etapa.
-                    </p>
-
-                </div>
-            `;
+    renderFinanceiro();
 
         } else if (page === "relatorios") {
 
@@ -3082,6 +3068,949 @@ modal.remove();
     });
 
 }
+
+// =====================================================
+// FINANCEIRO
+// =====================================================
+
+async function pegarMovimentacoes() {
+
+    const { data, error } = await supabaseClient
+        .from("financeiro")
+        .select("*")
+        .order("data", { ascending: false });
+
+    if (error) {
+        console.error("Erro ao carregar movimentações:", error);
+        return [];
+    }
+
+    return data || [];
+}
+
+
+// =====================================================
+// TELA DO FINANCEIRO
+// =====================================================
+
+async function renderFinanceiro() {
+
+    const movimentacoes = await pegarMovimentacoes();
+
+
+    const entradas = movimentacoes
+        .filter(item => item.tipo === "Entrada")
+        .reduce(
+            (total, item) => total + Number(item.valor || 0),
+            0
+        );
+
+
+    const saidas = movimentacoes
+        .filter(item => item.tipo === "Saída")
+        .reduce(
+            (total, item) => total + Number(item.valor || 0),
+            0
+        );
+
+
+    const saldo = entradas - saidas;
+
+
+    function formatarMoeda(valor) {
+
+        return Number(valor).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
+
+    }
+
+
+    pageContent.innerHTML = `
+
+        <div class="financeiro-page">
+
+
+            <!-- ================================
+                 CARDS
+            ================================= -->
+
+            <div class="dashboard-stats">
+
+
+                <div class="dashboard-stat-card">
+
+                    <div class="dashboard-stat-icon green">
+                        R$
+                    </div>
+
+                    <div class="dashboard-stat-content">
+
+                        <span>
+                            Entradas
+                        </span>
+
+                        <strong>
+                            ${formatarMoeda(entradas)}
+                        </strong>
+
+                        <small>
+                            Total recebido
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-card">
+
+                    <div class="dashboard-stat-icon orange">
+                        R$
+                    </div>
+
+                    <div class="dashboard-stat-content">
+
+                        <span>
+                            Saídas
+                        </span>
+
+                        <strong>
+                            ${formatarMoeda(saidas)}
+                        </strong>
+
+                        <small>
+                            Total de despesas
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-card">
+
+                    <div class="dashboard-stat-icon blue">
+                        R$
+                    </div>
+
+                    <div class="dashboard-stat-content">
+
+                        <span>
+                            Saldo
+                        </span>
+
+                        <strong>
+                            ${formatarMoeda(saldo)}
+                        </strong>
+
+                        <small>
+                            Entradas - saídas
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================================
+                 BARRA DE AÇÕES
+            ================================= -->
+
+            <div class="clientes-toolbar">
+
+                <div>
+
+                    <h2>
+                        Movimentações
+                    </h2>
+
+                    <p>
+                        Controle de entradas e saídas.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="primary-button"
+                    id="nova-movimentacao"
+                >
+                    + Nova movimentação
+                </button>
+
+            </div>
+
+
+            <!-- ================================
+                 TABELA
+            ================================= -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>
+                            Histórico financeiro
+                        </h2>
+
+                        <p>
+                            ${movimentacoes.length}
+                            ${
+                                movimentacoes.length === 1
+                                    ? "movimentação registrada"
+                                    : "movimentações registradas"
+                            }
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Data
+                                </th>
+
+                                <th>
+                                    Descrição
+                                </th>
+
+                                <th>
+                                    Tipo
+                                </th>
+
+                                <th>
+                                    Valor
+                                </th>
+
+                                <th>
+                                    Ações
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="financeiro-tabela">
+
+                            ${
+                                movimentacoes.length === 0
+
+                                    ? `
+
+                                        <tr>
+
+                                            <td
+                                                colspan="5"
+                                                style="text-align:center;"
+                                            >
+
+                                                Nenhuma movimentação
+                                                cadastrada.
+
+                                            </td>
+
+                                        </tr>
+
+                                    `
+
+                                    : movimentacoes.map(item => `
+
+                                        <tr>
+
+                                            <td>
+                                                ${item.data
+                                                    ? item.data
+                                                        .split("-")
+                                                        .reverse()
+                                                        .join("/")
+                                                    : "-"
+                                                }
+                                            </td>
+
+
+                                            <td>
+                                                ${item.descricao}
+                                            </td>
+
+
+                                            <td>
+
+                                                <span class="status ${
+                                                    item.tipo === "Entrada"
+                                                        ? "completed"
+                                                        : "pending"
+                                                }">
+
+                                                    ${item.tipo}
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                ${formatarMoeda(item.valor)}
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <div class="client-actions">
+
+                                                    <button
+                                                        class="action-button delete"
+                                                        data-id="${item.id}"
+                                                    >
+                                                        ×
+                                                    </button>
+
+                                                </div>
+
+                                            </td>
+
+                                        </tr>
+
+                                    `).join("")
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    `;
+
+
+    // =================================================
+    // NOVA MOVIMENTAÇÃO
+    // =================================================
+
+    document
+        .querySelector("#nova-movimentacao")
+        .addEventListener("click", () => {
+
+            abrirFormularioFinanceiro();
+
+        });
+
+}
+// =====================================================
+// FORMULÁRIO FINANCEIRO
+// =====================================================
+
+async function abrirFormularioFinanceiro() {
+
+    // =================================================
+    // BUSCAR SERVIÇOS CONCLUÍDOS
+    // =================================================
+
+    const servicos = await pegarServicos();
+
+    const movimentacoes = await pegarMovimentacoes();
+
+
+    const servicosPagos = movimentacoes
+        .filter(item => item.servico_id)
+        .map(item => Number(item.servico_id));
+
+
+    const servicosDisponiveis = servicos.filter(servico =>
+        servico.status === "Concluído" &&
+        !servicosPagos.includes(Number(servico.id))
+    );
+
+
+    const clientes = await pegarClientes();
+
+
+    const modal = document.createElement("div");
+
+    modal.className = "modal-overlay";
+
+
+    modal.innerHTML = `
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        Nova movimentação
+                    </h2>
+
+                    <p>
+                        Registre uma entrada ou saída.
+                    </p>
+
+                </div>
+
+                <button
+                    class="modal-close"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="financeiro-form">
+
+
+                <div class="form-group">
+
+                    <label>
+                        Tipo
+                    </label>
+
+                    <select
+                        id="financeiro-tipo"
+                        required
+                    >
+
+                        <option value="">
+                            Selecione o tipo
+                        </option>
+
+                        <option value="Entrada">
+                            Entrada
+                        </option>
+
+                        <option value="Saída">
+                            Saída
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- =====================================
+                     SERVIÇO
+                ====================================== -->
+
+                <div
+                    class="form-group"
+                    id="financeiro-servico-container"
+                >
+
+                    <label>
+                        Serviço pago
+                    </label>
+
+                    <select
+                        id="financeiro-servico"
+                    >
+
+                        <option value="">
+                            Selecione o serviço
+                        </option>
+
+                        ${
+                            servicosDisponiveis.length === 0
+
+                                ? `
+
+                                    <option value="" disabled>
+                                        Nenhum serviço concluído disponível
+                                    </option>
+
+                                `
+
+                                : servicosDisponiveis.map(servico => {
+
+                                    const cliente =
+                                        clientes.find(
+                                            cliente =>
+                                                Number(cliente.id) ===
+                                                Number(servico.clienteId)
+                                        );
+
+
+                                    const nomeCliente =
+                                        cliente
+                                            ? cliente.nome
+                                            : "Cliente não encontrado";
+
+
+                                    return `
+
+                                        <option
+                                            value="${servico.id}"
+                                            data-valor="${servico.valor}"
+                                            data-data="${servico.data}"
+                                        >
+                                            ${nomeCliente} - ${servico.tipo} - R$ ${Number(servico.valor || 0)
+                                                .toFixed(2)
+                                                .replace(".", ",")}
+                                        </option>
+
+                                    `;
+
+                                }).join("")
+
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Descrição
+                    </label>
+
+                    <input
+                        type="text"
+                        id="financeiro-descricao"
+                        placeholder="Ex.: Pagamento de serviço"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Data
+                        </label>
+
+                        <input
+                            type="date"
+                            id="financeiro-data"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Valor
+                        </label>
+
+                        <input
+                            type="number"
+                            id="financeiro-valor"
+                            placeholder="0,00"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        id="cancelar-financeiro"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                    >
+                        Cadastrar movimentação
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(modal);
+
+
+    // =================================================
+    // DATA ATUAL
+    // =================================================
+
+    const hoje = new Date();
+
+    const ano = hoje.getFullYear();
+
+    const mes = String(
+        hoje.getMonth() + 1
+    ).padStart(2, "0");
+
+    const dia = String(
+        hoje.getDate()
+    ).padStart(2, "0");
+
+
+    modal
+        .querySelector("#financeiro-data")
+        .value = `${ano}-${mes}-${dia}`;
+
+
+    // =================================================
+    // ELEMENTOS
+    // =================================================
+
+    const tipoSelect =
+        modal.querySelector("#financeiro-tipo");
+
+
+    const servicoContainer =
+        modal.querySelector("#financeiro-servico-container");
+
+
+    const servicoSelect =
+        modal.querySelector("#financeiro-servico");
+
+
+    const descricaoInput =
+        modal.querySelector("#financeiro-descricao");
+
+
+    const valorInput =
+        modal.querySelector("#financeiro-valor");
+
+
+    // =================================================
+    // TIPO DE MOVIMENTAÇÃO
+    // =================================================
+
+    tipoSelect.addEventListener("change", () => {
+
+        if (tipoSelect.value === "Entrada") {
+
+            servicoContainer.style.display = "block";
+
+            servicoSelect.required = true;
+
+        } else {
+
+            servicoContainer.style.display = "none";
+
+            servicoSelect.required = false;
+
+            servicoSelect.value = "";
+
+        }
+
+    });
+
+
+    // =================================================
+    // SELECIONAR SERVIÇO
+    // =================================================
+
+    servicoSelect.addEventListener("change", () => {
+
+        const option =
+            servicoSelect.options[
+                servicoSelect.selectedIndex
+            ];
+
+
+        if (!option || !servicoSelect.value) {
+            return;
+        }
+
+
+        const valor =
+            option.dataset.valor;
+
+
+        const data =
+            option.dataset.data;
+
+
+        // Preenche automaticamente o valor
+
+        if (valor !== undefined) {
+
+            valorInput.value =
+                Number(valor).toFixed(2);
+
+        }
+
+
+        // Usa a data do serviço como data do pagamento
+
+        if (data) {
+
+            const partes =
+                data.split("/");
+
+
+            if (partes.length === 3) {
+
+                modal
+                    .querySelector("#financeiro-data")
+                    .value =
+                    `${partes[2]}-${partes[1]}-${partes[0]}`;
+
+            }
+
+        }
+
+
+        // Preenche descrição
+
+        const texto =
+            option.textContent.trim();
+
+
+        descricaoInput.value =
+            `Pagamento - ${texto}`;
+
+    });
+
+
+    // =================================================
+    // FECHAR
+    // =================================================
+
+    modal
+        .querySelector(".modal-close")
+        .addEventListener("click", () => {
+
+            modal.remove();
+
+        });
+
+
+    modal
+        .querySelector("#cancelar-financeiro")
+        .addEventListener("click", () => {
+
+            modal.remove();
+
+        });
+
+
+    // =================================================
+    // SALVAR
+    // =================================================
+
+    modal
+        .querySelector("#financeiro-form")
+        .addEventListener("submit", async event => {
+
+            event.preventDefault();
+
+
+            const tipo =
+                tipoSelect.value;
+
+
+            const servicoId =
+                servicoSelect.value
+                    ? Number(servicoSelect.value)
+                    : null;
+
+
+            const descricao =
+                descricaoInput.value.trim();
+
+
+            const data =
+                modal
+                    .querySelector("#financeiro-data")
+                    .value;
+
+
+            const valor =
+                Number(
+                    valorInput.value
+                );
+
+
+            // =================================================
+            // VALIDAÇÃO
+            // =================================================
+
+            if (
+                !tipo ||
+                !descricao ||
+                !data ||
+                valor < 0
+            ) {
+
+                alert(
+                    "Preencha todos os campos obrigatórios."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                tipo === "Entrada" &&
+                !servicoId
+            ) {
+
+                alert(
+                    "Selecione o serviço que foi pago."
+                );
+
+                return;
+
+            }
+
+
+            // =================================================
+            // VERIFICAR SE O SERVIÇO JÁ FOI PAGO
+            // =================================================
+
+            if (servicoId) {
+
+                const { data: pagamentoExistente, error: erroVerificacao } =
+                    await supabaseClient
+                        .from("financeiro")
+                        .select("id")
+                        .eq("servico_id", servicoId)
+                        .maybeSingle();
+
+
+                if (erroVerificacao) {
+
+                    console.error(
+                        "Erro ao verificar pagamento:",
+                        erroVerificacao
+                    );
+
+                    alert(
+                        "Erro ao verificar o pagamento."
+                    );
+
+                    return;
+
+                }
+
+
+                if (pagamentoExistente) {
+
+                    alert(
+                        "Esse serviço já possui uma movimentação financeira."
+                    );
+
+                    modal.remove();
+
+                    renderFinanceiro();
+
+                    return;
+
+                }
+
+            }
+
+
+            // =================================================
+            // SALVAR NO SUPABASE
+            // =================================================
+
+            const { error } =
+                await supabaseClient
+                    .from("financeiro")
+                    .insert({
+
+                        tipo: tipo,
+
+                        descricao: descricao,
+
+                        data: data,
+
+                        valor: valor,
+
+                        servico_id: servicoId
+
+                    });
+
+
+            if (error) {
+
+                console.error(
+                    "Erro ao salvar movimentação:",
+                    error
+                );
+
+
+                // Caso o índice UNIQUE bloqueie duplicidade
+
+                if (error.code === "23505") {
+
+                    alert(
+                        "Esse serviço já foi registrado como pago."
+                    );
+
+                } else {
+
+                    alert(
+                        "Erro ao salvar movimentação."
+                    );
+
+                }
+
+
+                return;
+
+            }
+
+
+            modal.remove();
+
+
+            // Atualiza o financeiro
+
+            renderFinanceiro();
+
+        });
+
+}
+
 // =====================================================
 // INICIALIZAÇÃO DO SISTEMA
 // =====================================================
