@@ -771,6 +771,7 @@ function getPageIcon(page) {
 
     const clientes = await pegarClientes();
     const servicos = await pegarServicos();
+    const movimentacoes = await pegarMovimentacoes();
 
     const hoje = new Date();
 
@@ -833,9 +834,11 @@ function getPageIcon(page) {
     // =================================================
 
     const faturamento =
-        servicosConcluidos.reduce(
-            (total, servico) =>
-                total + Number(servico.valor || 0),
+    movimentacoes
+        .filter(item => item.tipo === "Entrada")
+        .reduce(
+            (total, item) =>
+                total + Number(item.valor || 0),
             0
         );
 
@@ -3426,27 +3429,22 @@ async function renderFinanceiro() {
 
 async function abrirFormularioFinanceiro() {
 
-    // =================================================
-    // BUSCAR SERVIÇOS CONCLUÍDOS
-    // =================================================
-
+    // Busca serviços concluídos
     const servicos = await pegarServicos();
 
+    // Busca movimentações que já existem
     const movimentacoes = await pegarMovimentacoes();
 
-
+    // IDs dos serviços que já foram pagos
     const servicosPagos = movimentacoes
-        .filter(item => item.servico_id)
+        .filter(item => item.servico_id !== null)
         .map(item => Number(item.servico_id));
 
-
+    // Apenas serviços concluídos e ainda não pagos
     const servicosDisponiveis = servicos.filter(servico =>
         servico.status === "Concluído" &&
         !servicosPagos.includes(Number(servico.id))
     );
-
-
-    const clientes = await pegarClientes();
 
 
     const modal = document.createElement("div");
@@ -3485,6 +3483,10 @@ async function abrirFormularioFinanceiro() {
             <form id="financeiro-form">
 
 
+                <!-- ================================
+                     TIPO
+                ================================= -->
+
                 <div class="form-group">
 
                     <label>
@@ -3513,22 +3515,21 @@ async function abrirFormularioFinanceiro() {
                 </div>
 
 
-                <!-- =====================================
+                <!-- ================================
                      SERVIÇO
-                ====================================== -->
+                ================================= -->
 
                 <div
                     class="form-group"
                     id="financeiro-servico-container"
+                    style="display: none;"
                 >
 
                     <label>
                         Serviço pago
                     </label>
 
-                    <select
-                        id="financeiro-servico"
-                    >
+                    <select id="financeiro-servico">
 
                         <option value="">
                             Selecione o serviço
@@ -3538,51 +3539,39 @@ async function abrirFormularioFinanceiro() {
                             servicosDisponiveis.length === 0
 
                                 ? `
-
                                     <option value="" disabled>
                                         Nenhum serviço concluído disponível
                                     </option>
-
                                 `
 
                                 : servicosDisponiveis.map(servico => {
 
-                                    const cliente =
-                                        clientes.find(
-                                            cliente =>
-                                                Number(cliente.id) ===
-                                                Number(servico.clienteId)
-                                        );
-
-
-                                    const nomeCliente =
-                                        cliente
-                                            ? cliente.nome
-                                            : "Cliente não encontrado";
-
-
                                     return `
-
                                         <option
                                             value="${servico.id}"
+                                            data-descricao="${servico.tipo}"
                                             data-valor="${servico.valor}"
                                             data-data="${servico.data}"
                                         >
-                                            ${nomeCliente} - ${servico.tipo} - R$ ${Number(servico.valor || 0)
+                                            ${servico.tipo} —
+                                            R$ ${Number(servico.valor || 0)
                                                 .toFixed(2)
                                                 .replace(".", ",")}
+                                            — ${servico.data}
                                         </option>
-
                                     `;
 
                                 }).join("")
-
                         }
 
                     </select>
 
                 </div>
 
+
+                <!-- ================================
+                     DESCRIÇÃO
+                ================================= -->
 
                 <div class="form-group">
 
@@ -3599,6 +3588,10 @@ async function abrirFormularioFinanceiro() {
 
                 </div>
 
+
+                <!-- ================================
+                     DATA + VALOR
+                ================================= -->
 
                 <div class="form-row">
 
@@ -3638,6 +3631,10 @@ async function abrirFormularioFinanceiro() {
 
                 </div>
 
+
+                <!-- ================================
+                     BOTÕES
+                ================================= -->
 
                 <div class="modal-actions">
 
@@ -3699,25 +3696,24 @@ async function abrirFormularioFinanceiro() {
     const tipoSelect =
         modal.querySelector("#financeiro-tipo");
 
-
     const servicoContainer =
         modal.querySelector("#financeiro-servico-container");
-
 
     const servicoSelect =
         modal.querySelector("#financeiro-servico");
 
-
     const descricaoInput =
         modal.querySelector("#financeiro-descricao");
-
 
     const valorInput =
         modal.querySelector("#financeiro-valor");
 
+    const dataInput =
+        modal.querySelector("#financeiro-data");
+
 
     // =================================================
-    // TIPO DE MOVIMENTAÇÃO
+    // MOSTRAR / ESCONDER SERVIÇO
     // =================================================
 
     tipoSelect.addEventListener("change", () => {
@@ -3726,15 +3722,14 @@ async function abrirFormularioFinanceiro() {
 
             servicoContainer.style.display = "block";
 
-            servicoSelect.required = true;
-
         } else {
 
             servicoContainer.style.display = "none";
 
-            servicoSelect.required = false;
-
             servicoSelect.value = "";
+
+            descricaoInput.value = "";
+            valorInput.value = "";
 
         }
 
@@ -3753,57 +3748,43 @@ async function abrirFormularioFinanceiro() {
             ];
 
 
-        if (!option || !servicoSelect.value) {
+        if (!servicoSelect.value) {
+
+            descricaoInput.value = "";
+            valorInput.value = "";
+
             return;
+
         }
 
 
-        const valor =
-            option.dataset.valor;
+        // Preenche automaticamente
+        descricaoInput.value =
+            option.dataset.descricao || "";
+
+        valorInput.value =
+            option.dataset.valor || "";
 
 
-        const data =
+        // Converte DD/MM/YYYY para YYYY-MM-DD
+        const dataServico =
             option.dataset.data;
 
 
-        // Preenche automaticamente o valor
-
-        if (valor !== undefined) {
-
-            valorInput.value =
-                Number(valor).toFixed(2);
-
-        }
-
-
-        // Usa a data do serviço como data do pagamento
-
-        if (data) {
+        if (dataServico) {
 
             const partes =
-                data.split("/");
+                dataServico.split("/");
 
 
             if (partes.length === 3) {
 
-                modal
-                    .querySelector("#financeiro-data")
-                    .value =
+                dataInput.value =
                     `${partes[2]}-${partes[1]}-${partes[0]}`;
 
             }
 
         }
-
-
-        // Preenche descrição
-
-        const texto =
-            option.textContent.trim();
-
-
-        descricaoInput.value =
-            `Pagamento - ${texto}`;
 
     });
 
@@ -3845,31 +3826,27 @@ async function abrirFormularioFinanceiro() {
                 tipoSelect.value;
 
 
-            const servicoId =
-                servicoSelect.value
-                    ? Number(servicoSelect.value)
-                    : null;
-
-
             const descricao =
                 descricaoInput.value.trim();
 
 
             const data =
-                modal
-                    .querySelector("#financeiro-data")
-                    .value;
+                dataInput.value;
 
 
             const valor =
-                Number(
-                    valorInput.value
-                );
+                Number(valorInput.value);
 
 
-            // =================================================
+            const servicoId =
+                tipo === "Entrada" && servicoSelect.value
+                    ? Number(servicoSelect.value)
+                    : null;
+
+
+            // =========================================
             // VALIDAÇÃO
-            // =================================================
+            // =========================================
 
             if (
                 !tipo ||
@@ -3887,6 +3864,7 @@ async function abrirFormularioFinanceiro() {
             }
 
 
+            // Entrada precisa ter serviço
             if (
                 tipo === "Entrada" &&
                 !servicoId
@@ -3901,9 +3879,9 @@ async function abrirFormularioFinanceiro() {
             }
 
 
-            // =================================================
-            // VERIFICAR SE O SERVIÇO JÁ FOI PAGO
-            // =================================================
+            // =========================================
+            // VERIFICA SE O SERVIÇO JÁ FOI PAGO
+            // =========================================
 
             if (servicoId) {
 
@@ -3923,7 +3901,7 @@ async function abrirFormularioFinanceiro() {
                     );
 
                     alert(
-                        "Erro ao verificar o pagamento."
+                        "Erro ao verificar se o serviço já foi pago."
                     );
 
                     return;
@@ -3934,12 +3912,8 @@ async function abrirFormularioFinanceiro() {
                 if (pagamentoExistente) {
 
                     alert(
-                        "Esse serviço já possui uma movimentação financeira."
+                        "Esse serviço já possui um pagamento registrado."
                     );
-
-                    modal.remove();
-
-                    renderFinanceiro();
 
                     return;
 
@@ -3948,9 +3922,9 @@ async function abrirFormularioFinanceiro() {
             }
 
 
-            // =================================================
+            // =========================================
             // SALVAR NO SUPABASE
-            // =================================================
+            // =========================================
 
             const { error } =
                 await supabaseClient
@@ -3972,38 +3946,24 @@ async function abrirFormularioFinanceiro() {
 
             if (error) {
 
-                console.error(
-                    "Erro ao salvar movimentação:",
-                    error
-                );
+    console.error(
+        "ERRO COMPLETO AO SALVAR:",
+        error
+    );
+
+    alert(
+        "Erro: " + error.message
+    );
+
+    return;
+}
 
 
-                // Caso o índice UNIQUE bloqueie duplicidade
-
-                if (error.code === "23505") {
-
-                    alert(
-                        "Esse serviço já foi registrado como pago."
-                    );
-
-                } else {
-
-                    alert(
-                        "Erro ao salvar movimentação."
-                    );
-
-                }
-
-
-                return;
-
-            }
-
+            // =========================================
+            // FINALIZAR
+            // =========================================
 
             modal.remove();
-
-
-            // Atualiza o financeiro
 
             renderFinanceiro();
 
