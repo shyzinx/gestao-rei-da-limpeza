@@ -828,6 +828,44 @@ function getPageIcon(page) {
             servico.status === "Agendado"
     );
 
+    // =================================================
+// SERVIÇOS EM ANDAMENTO HÁ MAIS DE 24 HORAS
+// =================================================
+
+const agora = new Date();
+
+const servicosAtrasados = servicos.filter(servico => {
+
+    if (servico.status !== "Em andamento") {
+        return false;
+    }
+
+    const partesData = servico.data.split("/");
+
+    if (partesData.length !== 3 || !servico.horario) {
+        return false;
+    }
+
+    const [dia, mes, ano] = partesData.map(Number);
+
+    const [hora, minuto] = servico.horario
+        .split(":")
+        .map(Number);
+
+    const dataServico = new Date(
+        ano,
+        mes - 1,
+        dia,
+        hora,
+        minuto
+    );
+
+    const diferencaHoras =
+        (agora - dataServico) / (1000 * 60 * 60);
+
+    return diferencaHoras >= 24;
+
+    });
 
     // =================================================
     // FATURAMENTO
@@ -925,6 +963,37 @@ function getPageIcon(page) {
     pageContent.innerHTML = `
 
         <div class="dashboard-page">
+        
+        ${
+    servicosAtrasados.length > 0
+        ? `
+            <div class="dashboard-alerta-andamento">
+
+                <div class="dashboard-alerta-icone">
+                    !
+                </div>
+
+                <div class="dashboard-alerta-conteudo">
+
+                    <strong>
+                        Atenção: serviço em andamento há mais de 24 horas
+                    </strong>
+
+                    <span>
+                        ${servicosAtrasados.length}
+                        ${
+                            servicosAtrasados.length === 1
+                                ? "serviço precisa ser verificado."
+                                : "serviços precisam ser verificados."
+                        }
+                    </span>
+
+                </div>
+
+            </div>
+        `
+        : ""
+}
 
 
             <!-- =========================================
