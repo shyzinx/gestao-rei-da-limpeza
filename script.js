@@ -673,8 +673,7 @@ async function excluirCliente(id) {
 // =====================================================
 
 navItems.forEach(button => {
-
-    button.addEventListener("click", function () {
+    button.addEventListener("click", async function () {
 
         const page = this.getAttribute("data-page");
 
@@ -717,28 +716,331 @@ navItems.forEach(button => {
 
         } else if (page === "financeiro") {
 
-    renderFinanceiro();
+             renderFinanceiro();
 
         } else if (page === "relatorios") {
+            renderRelatorios();
+        }
+         
+        async function renderRelatorios() {
+
+            const movimentacoes = await pegarMovimentacoes();
+            const servicos = await pegarServicos();
+            const clientes = await pegarClientes();
+
+            const entradas = movimentacoes
+                .filter(item => item.tipo === "Entrada")
+                .reduce(
+                    (total, item) => total + Number(item.valor || 0),
+                    0
+                );
+
+            const saidas = movimentacoes
+                .filter(item => item.tipo === "Saída")
+                .reduce(
+                    (total, item) => total + Number(item.valor || 0),
+                    0
+                );
+
+            const saldo = entradas - saidas;
+
+            const servicosConcluidos = servicos
+                .filter(item => item.status === "Concluído")
+                .length;
+
+            const servicosPendentes = servicos
+                .filter(item => item.status !== "Concluído")
+                .length;
+
+            const formatarMoeda = valor => {
+                return Number(valor).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL"
+                });
+            };
 
             pageContent.innerHTML = `
-                <div class="empty-page">
+                <div class="relatorios-page">
 
-                    <div class="empty-icon">
-                        ${getPageIcon(page)}
+                    <!-- =================================
+                         RESUMO FINANCEIRO
+                    ================================== -->
+
+                    <div class="dashboard-stats">
+
+                        <div class="dashboard-stat-card">
+                            <div class="dashboard-stat-icon green">
+                                R$
+                            </div>
+
+                            <div>
+                                <span class="dashboard-stat-label">
+                                    Total de entradas
+                                </span>
+
+                                <strong>
+                                    ${formatarMoeda(entradas)}
+                                </strong>
+                            </div>
+                        </div>
+
+
+                        <div class="dashboard-stat-card">
+                            <div class="dashboard-stat-icon red">
+                                R$
+                            </div>
+
+                            <div>
+                                <span class="dashboard-stat-label">
+                                    Total de saídas
+                                </span>
+
+                                <strong>
+                                    ${formatarMoeda(saidas)}
+                                </strong>
+                            </div>
+                        </div>
+
+
+                        <div class="dashboard-stat-card">
+                            <div class="dashboard-stat-icon blue">
+                                R$
+                            </div>
+
+                            <div>
+                                <span class="dashboard-stat-label">
+                                    Saldo
+                                </span>
+
+                                <strong>
+                                    ${formatarMoeda(saldo)}
+                                </strong>
+                            </div>
+                        </div>
+
+
+                        <div class="dashboard-stat-card">
+                            <div class="dashboard-stat-icon purple">
+                                ✓
+                            </div>
+
+                            <div>
+                                <span class="dashboard-stat-label">
+                                    Serviços concluídos
+                                </span>
+
+                                <strong>
+                                    ${servicosConcluidos}
+                                </strong>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <h2>Relatórios</h2>
 
-                    <p>
-                        Essa área será desenvolvida na próxima etapa.
-                    </p>
+                    <!-- =================================
+                         RELATÓRIO DE SERVIÇOS
+                    ================================== -->
+
+                    <div class="content-card">
+
+                        <div class="content-card-header">
+
+                            <div>
+                                <h2>
+                                    Relatório de serviços
+                                </h2>
+
+                                <p>
+                                    Resumo dos serviços cadastrados.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="report-grid">
+
+                            <div class="report-item">
+
+                                <span>
+                                    Total de clientes
+                                </span>
+
+                                <strong>
+                                    ${clientes.length}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="report-item">
+
+                                <span>
+                                    Total de serviços
+                                </span>
+
+                                <strong>
+                                    ${servicos.length}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="report-item">
+
+                                <span>
+                                    Serviços concluídos
+                                </span>
+
+                                <strong>
+                                    ${servicosConcluidos}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="report-item">
+
+                                <span>
+                                    Serviços pendentes
+                                </span>
+
+                                <strong>
+                                    ${servicosPendentes}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================
+                         MOVIMENTAÇÕES FINANCEIRAS
+                    ================================== -->
+
+                    <div class="content-card">
+
+                        <div class="content-card-header">
+
+                            <div>
+                                <h2>
+                                    Movimentações financeiras
+                                </h2>
+
+                                <p>
+                                    Resumo das movimentações registradas.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-container">
+
+                            <table>
+
+                                <thead>
+
+                                    <tr>
+                                        <th>
+                                            Data
+                                        </th>
+
+                                        <th>
+                                            Descrição
+                                        </th>
+
+                                        <th>
+                                            Tipo
+                                        </th>
+
+                                        <th>
+                                            Valor
+                                        </th>
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    ${
+                                        movimentacoes.length === 0
+
+                                            ? `
+                                                <tr>
+
+                                                    <td
+                                                        colspan="4"
+                                                        style="text-align:center;"
+                                                    >
+                                                        Nenhuma movimentação
+                                                        cadastrada.
+                                                    </td>
+
+                                                </tr>
+                                            `
+
+                                            : movimentacoes.map(item => `
+
+                                                <tr>
+
+                                                    <td>
+                                                        ${
+                                                            item.data
+                                                                ? item.data
+                                                                    .split("-")
+                                                                    .reverse()
+                                                                    .join("/")
+                                                                : "-"
+                                                        }
+                                                    </td>
+
+
+                                                    <td>
+                                                        ${item.descricao || "-"}
+                                                    </td>
+
+
+                                                    <td>
+
+                                                        <span class="status ${
+                                                            item.tipo === "Entrada"
+                                                                ? "completed"
+                                                                : "pending"
+                                                        }">
+
+                                                            ${item.tipo}
+
+                                                        </span>
+
+                                                    </td>
+
+
+                                                    <td>
+                                                        ${formatarMoeda(item.valor)}
+                                                    </td>
+
+                                                </tr>
+
+                                            `).join("")
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
 
                 </div>
             `;
 
         }
-
     });
 
 });
