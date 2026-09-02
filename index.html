@@ -37,7 +37,7 @@
 
                 <button class="nav-item" data-page="clientes">
                     <span class="nav-icon">♙</span>
-                    <span>Clientes</span>
+                    <span>Clientes</span
                 </button>
 
                 <button class="nav-item" data-page="servicos">
@@ -139,6 +139,51 @@
         </main>
 
     </div>
+    <div id="modalConfirmarExclusao" class="confirm-overlay">
+
+    <div class="confirm-modal">
+
+        <div class="confirm-icon">
+            !
+        </div>
+
+        <div class="confirm-content">
+
+            <h2>Excluir movimentação?</h2>
+
+            <p>
+                Tem certeza que deseja excluir esta movimentação?
+            </p>
+
+            <span>
+                Essa ação não poderá ser desfeita.
+            </span>
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="secondary-button"
+                onclick="fecharModalExclusao()"
+            >
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                class="delete-confirm-button"
+                onclick="confirmarExclusaoMovimentacao()"
+            >
+                Excluir
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>

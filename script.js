@@ -826,47 +826,9 @@ function getPageIcon(page) {
     const servicosAgendados = servicos.filter(
         servico =>
             servico.status === "Agendado"
-    );
+ );
 
-    // =================================================
-// SERVIÇOS EM ANDAMENTO HÁ MAIS DE 24 HORAS
-// =================================================
-
-const agora = new Date();
-
-const servicosAtrasados = servicos.filter(servico => {
-
-    if (servico.status !== "Em andamento") {
-        return false;
-    }
-
-    const partesData = servico.data.split("/");
-
-    if (partesData.length !== 3 || !servico.horario) {
-        return false;
-    }
-
-    const [dia, mes, ano] = partesData.map(Number);
-
-    const [hora, minuto] = servico.horario
-        .split(":")
-        .map(Number);
-
-    const dataServico = new Date(
-        ano,
-        mes - 1,
-        dia,
-        hora,
-        minuto
-    );
-
-    const diferencaHoras =
-        (agora - dataServico) / (1000 * 60 * 60);
-
-    return diferencaHoras >= 24;
-
-    });
-
+ 
     // =================================================
     // FATURAMENTO
     // =================================================
@@ -963,37 +925,8 @@ const servicosAtrasados = servicos.filter(servico => {
     pageContent.innerHTML = `
 
         <div class="dashboard-page">
-        
-        ${
-    servicosAtrasados.length > 0
-        ? `
-            <div class="dashboard-alerta-andamento">
 
-                <div class="dashboard-alerta-icone">
-                    !
-                </div>
-
-                <div class="dashboard-alerta-conteudo">
-
-                    <strong>
-                        Atenção: serviço em andamento há mais de 24 horas
-                    </strong>
-
-                    <span>
-                        ${servicosAtrasados.length}
-                        ${
-                            servicosAtrasados.length === 1
-                                ? "serviço precisa ser verificado."
-                                : "serviços precisam ser verificados."
-                        }
-                    </span>
-
-                </div>
-
-            </div>
-        `
-        : ""
-}
+ 
 
 
             <!-- =========================================
@@ -3132,7 +3065,7 @@ modal.remove();
 
         } else {
 
-             
+
         await atualizarTabelaServicos();
 
         }
@@ -3484,13 +3417,87 @@ async function renderFinanceiro() {
     // =================================================
 
     document
-        .querySelector("#nova-movimentacao")
-        .addEventListener("click", () => {
+    .querySelector("#nova-movimentacao")
+    .addEventListener("click", () => {
 
-            abrirFormularioFinanceiro();
+        abrirFormularioFinanceiro();
+
+    });
+
+    document
+    .querySelectorAll("#financeiro-tabela .action-button.delete")
+    .forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            excluirMovimentacao(
+                Number(button.dataset.id)
+            );
 
         });
 
+    });
+
+}
+
+// =================================================
+// EXCLUIR MOVIMENTAÇÃO
+// =================================================
+
+async function excluirMovimentacao(id) {
+    const modal = document.getElementById("modalConfirmarExclusao");
+
+    if (!modal) {
+        console.error("Modal de confirmação não encontrado.");
+        return;
+    }
+
+    modal.dataset.id = id;
+    modal.classList.add("show");
+}
+
+async function confirmarExclusaoMovimentacao() {
+
+    const modal = document.getElementById("modalConfirmarExclusao");
+    const id = modal.dataset.id;
+
+    if (!id) {
+        console.error("ID da movimentação não encontrado.");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("financeiro")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+
+        console.error(
+            "Erro ao excluir movimentação:",
+            error
+        );
+
+        alert(
+            "Erro ao excluir movimentação: " +
+            error.message
+        );
+
+        return;
+    }
+
+    fecharModalExclusao();
+
+    renderFinanceiro();
+}
+
+function fecharModalExclusao() {
+    const modal = document.getElementById("modalConfirmarExclusao");
+
+    if (modal) {
+        modal.classList.remove("show");
+        delete modal.dataset.id;
+    }
 }
 // =====================================================
 // FORMULÁRIO FINANCEIRO
@@ -4047,5 +4054,4 @@ async function abrirFormularioFinanceiro() {
 document.addEventListener("DOMContentLoaded", () => {
 
     renderDashboard();
-
 });
