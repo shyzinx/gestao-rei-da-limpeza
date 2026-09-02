@@ -720,330 +720,476 @@ navItems.forEach(button => {
 
         } else if (page === "relatorios") {
             renderRelatorios();
-        }
+          }
+
+    });
+});
+
          
-        async function renderRelatorios() {
+       async function renderRelatorios() {
 
-            const movimentacoes = await pegarMovimentacoes();
-            const servicos = await pegarServicos();
-            const clientes = await pegarClientes();
+    const movimentacoes = await pegarMovimentacoes();
+    const servicos = await pegarServicos();
+    const clientes = await pegarClientes();
 
-            const entradas = movimentacoes
-                .filter(item => item.tipo === "Entrada")
-                .reduce(
-                    (total, item) => total + Number(item.valor || 0),
-                    0
-                );
+    const entradas = movimentacoes
+        .filter(item => item.tipo === "Entrada")
+        .reduce(
+            (total, item) => total + Number(item.valor || 0),
+            0
+        );
 
-            const saidas = movimentacoes
-                .filter(item => item.tipo === "Saída")
-                .reduce(
-                    (total, item) => total + Number(item.valor || 0),
-                    0
-                );
+    const saidas = movimentacoes
+        .filter(item => item.tipo === "Saída")
+        .reduce(
+            (total, item) => total + Number(item.valor || 0),
+            0
+        );
 
-            const saldo = entradas - saidas;
+    const saldo = entradas - saidas;
 
-            const servicosConcluidos = servicos
-                .filter(item => item.status === "Concluído")
-                .length;
+    const servicosConcluidos = servicos
+        .filter(item => item.status === "Concluído")
+        .length;
 
-            const servicosPendentes = servicos
-                .filter(item => item.status !== "Concluído")
-                .length;
+    const servicosPendentes = servicos
+        .filter(item => item.status !== "Concluído")
+        .length;
 
-            const formatarMoeda = valor => {
-                return Number(valor).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL"
-                });
-            };
+    const formatarMoeda = valor => {
+        return Number(valor).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
+    };
 
-            pageContent.innerHTML = `
-                <div class="relatorios-page">
+    pageContent.innerHTML = `
 
-                    <!-- =================================
-                         RESUMO FINANCEIRO
-                    ================================== -->
+        <div class="relatorios-page">
 
-                    <div class="dashboard-stats">
+            <!-- ==========================================
+                 CABEÇALHO
+            =========================================== -->
 
-                        <div class="dashboard-stat-card">
-                            <div class="dashboard-stat-icon green">
+            <div class="relatorios-header">
+
+                <div>
+                    <span class="relatorios-kicker">
+                        ANÁLISE DO NEGÓCIO
+                    </span>
+
+                    <h2>
+                        Relatórios
+                    </h2>
+
+                    <p>
+                        Acompanhe os principais indicadores
+                        financeiros e operacionais.
+                    </p>
+                </div>
+
+                <div class="relatorios-header-icon">
+                    ▤
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 RESUMO FINANCEIRO
+            =========================================== -->
+
+            <div class="relatorios-section">
+
+                <div class="relatorios-section-title">
+
+                    <div>
+                        <h3>
+                            Resumo financeiro
+                        </h3>
+
+                        <span>
+                            Visão geral das movimentações
+                        </span>
+                    </div>
+
+                    <div class="relatorios-section-line"></div>
+
+                </div>
+
+
+                <div class="relatorios-finance-grid">
+
+
+                    <!-- ENTRADAS -->
+
+                    <div class="relatorio-finance-card entrada">
+
+                        <div class="relatorio-card-top">
+
+                            <div class="relatorio-card-icon">
+                                ↑
+                            </div>
+
+                            <span>
+                                ENTRADAS
+                            </span>
+
+                        </div>
+
+                        <strong>
+                            ${formatarMoeda(entradas)}
+                        </strong>
+
+                        <small>
+                            Total recebido
+                        </small>
+
+                    </div>
+
+
+                    <!-- SAÍDAS -->
+
+                    <div class="relatorio-finance-card saida">
+
+                        <div class="relatorio-card-top">
+
+                            <div class="relatorio-card-icon">
+                                ↓
+                            </div>
+
+                            <span>
+                                SAÍDAS
+                            </span>
+
+                        </div>
+
+                        <strong>
+                            ${formatarMoeda(saidas)}
+                        </strong>
+
+                        <small>
+                            Total de despesas
+                        </small>
+
+                    </div>
+
+
+                    <!-- SALDO -->
+
+                    <div class="relatorio-finance-card saldo">
+
+                        <div class="relatorio-card-top">
+
+                            <div class="relatorio-card-icon">
                                 R$
                             </div>
 
-                            <div>
-                                <span class="dashboard-stat-label">
-                                    Total de entradas
-                                </span>
+                            <span>
+                                SALDO
+                            </span>
 
-                                <strong>
-                                    ${formatarMoeda(entradas)}
-                                </strong>
-                            </div>
                         </div>
 
+                        <strong>
+                            ${formatarMoeda(saldo)}
+                        </strong>
 
-                        <div class="dashboard-stat-card">
-                            <div class="dashboard-stat-icon red">
-                                R$
-                            </div>
+                        <small>
+                            Resultado financeiro
+                        </small>
 
-                            <div>
-                                <span class="dashboard-stat-label">
-                                    Total de saídas
-                                </span>
+                    </div>
 
-                                <strong>
-                                    ${formatarMoeda(saidas)}
-                                </strong>
-                            </div>
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 INDICADORES OPERACIONAIS
+            =========================================== -->
+
+            <div class="relatorios-section">
+
+                <div class="relatorios-section-title">
+
+                    <div>
+                        <h3>
+                            Indicadores operacionais
+                        </h3>
+
+                        <span>
+                            Desempenho dos serviços cadastrados
+                        </span>
+                    </div>
+
+                    <div class="relatorios-section-line"></div>
+
+                </div>
+
+
+                <div class="relatorios-indicadores">
+
+
+                    <div class="relatorio-indicador">
+
+                        <div class="indicador-icon clientes">
+                            ♙
                         </div>
 
+                        <div class="indicador-info">
 
-                        <div class="dashboard-stat-card">
-                            <div class="dashboard-stat-icon blue">
-                                R$
-                            </div>
+                            <span>
+                                Clientes
+                            </span>
 
-                            <div>
-                                <span class="dashboard-stat-label">
-                                    Saldo
-                                </span>
+                            <strong>
+                                ${clientes.length}
+                            </strong>
 
-                                <strong>
-                                    ${formatarMoeda(saldo)}
-                                </strong>
-                            </div>
-                        </div>
-
-
-                        <div class="dashboard-stat-card">
-                            <div class="dashboard-stat-icon purple">
-                                ✓
-                            </div>
-
-                            <div>
-                                <span class="dashboard-stat-label">
-                                    Serviços concluídos
-                                </span>
-
-                                <strong>
-                                    ${servicosConcluidos}
-                                </strong>
-                            </div>
                         </div>
 
                     </div>
 
 
-                    <!-- =================================
-                         RELATÓRIO DE SERVIÇOS
-                    ================================== -->
+                    <div class="relatorio-indicador">
 
-                    <div class="content-card">
-
-                        <div class="content-card-header">
-
-                            <div>
-                                <h2>
-                                    Relatório de serviços
-                                </h2>
-
-                                <p>
-                                    Resumo dos serviços cadastrados.
-                                </p>
-                            </div>
-
+                        <div class="indicador-icon servicos">
+                            ✓
                         </div>
 
+                        <div class="indicador-info">
 
-                        <div class="report-grid">
+                            <span>
+                                Serviços
+                            </span>
 
-                            <div class="report-item">
-
-                                <span>
-                                    Total de clientes
-                                </span>
-
-                                <strong>
-                                    ${clientes.length}
-                                </strong>
-
-                            </div>
-
-
-                            <div class="report-item">
-
-                                <span>
-                                    Total de serviços
-                                </span>
-
-                                <strong>
-                                    ${servicos.length}
-                                </strong>
-
-                            </div>
-
-
-                            <div class="report-item">
-
-                                <span>
-                                    Serviços concluídos
-                                </span>
-
-                                <strong>
-                                    ${servicosConcluidos}
-                                </strong>
-
-                            </div>
-
-
-                            <div class="report-item">
-
-                                <span>
-                                    Serviços pendentes
-                                </span>
-
-                                <strong>
-                                    ${servicosPendentes}
-                                </strong>
-
-                            </div>
+                            <strong>
+                                ${servicos.length}
+                            </strong>
 
                         </div>
 
                     </div>
 
 
-                    <!-- =================================
-                         MOVIMENTAÇÕES FINANCEIRAS
-                    ================================== -->
+                    <div class="relatorio-indicador">
 
-                    <div class="content-card">
+                        <div class="indicador-icon concluidos">
+                            ✓
+                        </div>
 
-                        <div class="content-card-header">
+                        <div class="indicador-info">
 
-                            <div>
-                                <h2>
-                                    Movimentações financeiras
-                                </h2>
+                            <span>
+                                Concluídos
+                            </span>
 
-                                <p>
-                                    Resumo das movimentações registradas.
-                                </p>
-                            </div>
+                            <strong>
+                                ${servicosConcluidos}
+                            </strong>
 
                         </div>
 
-
-                        <div class="table-container">
-
-                            <table>
-
-                                <thead>
-
-                                    <tr>
-                                        <th>
-                                            Data
-                                        </th>
-
-                                        <th>
-                                            Descrição
-                                        </th>
-
-                                        <th>
-                                            Tipo
-                                        </th>
-
-                                        <th>
-                                            Valor
-                                        </th>
-                                    </tr>
-
-                                </thead>
+                    </div>
 
 
-                                <tbody>
+                    <div class="relatorio-indicador">
 
-                                    ${
-                                        movimentacoes.length === 0
+                        <div class="indicador-icon pendentes">
+                            !
+                        </div>
 
-                                            ? `
-                                                <tr>
+                        <div class="indicador-info">
 
-                                                    <td
-                                                        colspan="4"
-                                                        style="text-align:center;"
-                                                    >
-                                                        Nenhuma movimentação
-                                                        cadastrada.
-                                                    </td>
+                            <span>
+                                Pendentes
+                            </span>
 
-                                                </tr>
-                                            `
-
-                                            : movimentacoes.map(item => `
-
-                                                <tr>
-
-                                                    <td>
-                                                        ${
-                                                            item.data
-                                                                ? item.data
-                                                                    .split("-")
-                                                                    .reverse()
-                                                                    .join("/")
-                                                                : "-"
-                                                        }
-                                                    </td>
-
-
-                                                    <td>
-                                                        ${item.descricao || "-"}
-                                                    </td>
-
-
-                                                    <td>
-
-                                                        <span class="status ${
-                                                            item.tipo === "Entrada"
-                                                                ? "completed"
-                                                                : "pending"
-                                                        }">
-
-                                                            ${item.tipo}
-
-                                                        </span>
-
-                                                    </td>
-
-
-                                                    <td>
-                                                        ${formatarMoeda(item.valor)}
-                                                    </td>
-
-                                                </tr>
-
-                                            `).join("")
-                                    }
-
-                                </tbody>
-
-                            </table>
+                            <strong>
+                                ${servicosPendentes}
+                            </strong>
 
                         </div>
 
                     </div>
 
                 </div>
-            `;
 
-        }
-    });
+            </div>
 
-});
+
+            <!-- ==========================================
+                 MOVIMENTAÇÕES
+            =========================================== -->
+
+            <div class="relatorios-section">
+
+                <div class="relatorios-section-title">
+
+                    <div>
+                        <h3>
+                            Movimentações financeiras
+                        </h3>
+
+                        <span>
+                            Histórico das entradas e saídas registradas
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="relatorios-table-wrapper">
+
+                    <table class="relatorios-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Data
+                                </th>
+
+                                <th>
+                                    Descrição
+                                </th>
+
+                                <th>
+                                    Tipo
+                                </th>
+
+                                <th>
+                                    Valor
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            ${
+                                movimentacoes.length === 0
+
+                                    ? `
+
+                                        <tr>
+
+                                            <td
+                                                colspan="4"
+                                                class="relatorios-empty"
+                                            >
+
+                                                <div>
+                                                    ▤
+                                                </div>
+
+                                                <strong>
+                                                    Nenhuma movimentação
+                                                </strong>
+
+                                                <span>
+                                                    Ainda não existem movimentações
+                                                    financeiras registradas.
+                                                </span>
+
+                                            </td>
+
+                                        </tr>
+
+                                    `
+
+                                    : movimentacoes.map(item => `
+
+                                        <tr>
+
+                                            <td>
+
+                                                <span class="relatorio-data">
+
+                                                    ${
+                                                        item.data
+                                                            ? item.data
+                                                                .split("-")
+                                                                .reverse()
+                                                                .join("/")
+                                                            : "-"
+                                                    }
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span class="relatorio-descricao">
+
+                                                    ${item.descricao || "-"}
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span class="relatorio-tipo ${
+                                                    item.tipo === "Entrada"
+                                                        ? "entrada"
+                                                        : "saida"
+                                                }">
+
+                                                    <span class="tipo-dot"></span>
+
+                                                    ${item.tipo}
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <strong class="relatorio-valor ${
+                                                    item.tipo === "Entrada"
+                                                        ? "valor-entrada"
+                                                        : "valor-saida"
+                                                }">
+
+                                                    ${
+                                                        item.tipo === "Entrada"
+                                                            ? "+"
+                                                            : "-"
+                                                    }
+
+                                                    ${formatarMoeda(item.valor)}
+
+                                                </strong>
+
+                                            </td>
+
+                                        </tr>
+
+                                    `).join("")
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+}
+    
 
 // =====================================================
 // ÍCONES
