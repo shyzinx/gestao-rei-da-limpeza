@@ -2484,3 +2484,466 @@ tbody tr:hover {
 ::-webkit-scrollbar-thumb:hover {
     background: #aeb7c4;
 }
+/* =====================================================
+   RELATÓRIOS — VISUAL PROFISSIONAL
+===================================================== */
+
+.relatorios-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+
+/* =====================================================
+   CARDS FINANCEIROS
+===================================================== */
+
+.relatorios-page .dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.relatorios-page .dashboard-stat-card {
+    position: relative;
+
+    background: #ffffff;
+
+    border: 1px solid #e6eaf0;
+    border-radius: 16px;
+
+    padding: 22px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    min-height: 115px;
+
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.relatorios-page .dashboard-stat-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+
+    border-color: #dce2ea;
+}
+
+
+/* =====================================================
+   ÍCONES DOS CARDS
+===================================================== */
+
+.relatorios-page .dashboard-stat-icon {
+    width: 48px;
+    height: 48px;
+
+    min-width: 48px;
+
+    border-radius: 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.relatorios-page .dashboard-stat-icon.green {
+    background: #e9f8ef;
+    color: #159957;
+}
+
+.relatorios-page .dashboard-stat-icon.red {
+    background: #fff0f1;
+    color: #d64550;
+}
+
+.relatorios-page .dashboard-stat-icon.blue {
+    background: #edf3ff;
+    color: #4169d8;
+}
+
+.relatorios-page .dashboard-stat-icon.purple {
+    background: #f2edff;
+    color: #7654d6;
+}
+
+
+/* =====================================================
+   TEXTO DOS CARDS
+===================================================== */
+
+.relatorios-page .dashboard-stat-card > div:last-child {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+.relatorios-page .dashboard-stat-label {
+    color: #7c8492;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    margin-bottom: 6px;
+}
+
+.relatorios-page .dashboard-stat-card strong {
+    color: #202938;
+
+    font-size: 21px;
+    font-weight: 750;
+
+    line-height: 1.2;
+}
+
+
+/* =====================================================
+   CARDS DE CONTEÚDO
+===================================================== */
+
+.relatorios-page .content-card {
+    background: #ffffff;
+
+    border: 1px solid #e6eaf0;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.035);
+}
+
+
+/* =====================================================
+   CABEÇALHO DOS CARDS
+===================================================== */
+
+.relatorios-page .content-card-header {
+    padding: 22px 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.relatorios-page .content-card-header h2 {
+    margin: 0;
+
+    color: #202938;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.relatorios-page .content-card-header p {
+    margin: 6px 0 0;
+
+    color: #8a93a1;
+
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   RESUMO DOS SERVIÇOS
+===================================================== */
+
+.relatorios-page .report-grid {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 0;
+}
+
+.relatorios-page .report-item {
+    position: relative;
+
+    padding: 24px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+
+    border-right: 1px solid #edf0f4;
+}
+
+.relatorios-page .report-item:last-child {
+    border-right: none;
+}
+
+.relatorios-page .report-item span {
+    color: #7c8492;
+
+    font-size: 12px;
+}
+
+.relatorios-page .report-item strong {
+    color: #202938;
+
+    font-size: 27px;
+    font-weight: 750;
+
+    line-height: 1;
+}
+
+
+/* =====================================================
+   INDICADORES DOS SERVIÇOS
+===================================================== */
+
+.relatorios-page .report-item:nth-child(1) strong {
+    color: #4169d8;
+}
+
+.relatorios-page .report-item:nth-child(2) strong {
+    color: #7654d6;
+}
+
+.relatorios-page .report-item:nth-child(3) strong {
+    color: #159957;
+}
+
+.relatorios-page .report-item:nth-child(4) strong {
+    color: #d98b2b;
+}
+
+
+/* =====================================================
+   TABELA DE MOVIMENTAÇÕES
+===================================================== */
+
+.relatorios-page .table-container {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+.relatorios-page table {
+    width: 100%;
+
+    min-width: 650px;
+
+    border-collapse: collapse;
+}
+
+.relatorios-page thead th {
+    padding: 13px 24px;
+
+    background: #fafbfc;
+
+    border-bottom: 1px solid #edf0f4;
+
+    color: #8a93a1;
+
+    text-align: left;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.6px;
+}
+
+.relatorios-page tbody td {
+    padding: 16px 24px;
+
+    border-top: 1px solid #f0f2f5;
+
+    color: #596171;
+
+    font-size: 12px;
+
+    vertical-align: middle;
+}
+
+.relatorios-page tbody tr {
+    transition: background 0.15s ease;
+}
+
+.relatorios-page tbody tr:hover {
+    background: #fafcff;
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+.relatorios-page tbody td:first-child {
+    color: #7c8492;
+
+    font-size: 11px;
+
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   DESCRIÇÃO
+===================================================== */
+
+.relatorios-page tbody td:nth-child(2) {
+    color: #303846;
+
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   STATUS ENTRADA / SAÍDA
+===================================================== */
+
+.relatorios-page .status {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 70px;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.relatorios-page .status.completed {
+    background: #eaf8f0;
+
+    color: #15803d;
+}
+
+.relatorios-page .status.pending {
+    background: #fff1f2;
+
+    color: #d64550;
+}
+
+
+/* =====================================================
+   VALOR
+===================================================== */
+
+.relatorios-page tbody td:last-child {
+    color: #273142;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   LINHA SEM MOVIMENTAÇÕES
+===================================================== */
+
+.relatorios-page tbody td[colspan] {
+    padding: 45px 20px;
+
+    color: #98a2b3;
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   RESPONSIVIDADE
+===================================================== */
+
+@media (max-width: 1200px) {
+
+    .relatorios-page .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .relatorios-page .report-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .relatorios-page .report-item:nth-child(2) {
+        border-right: none;
+    }
+
+    .relatorios-page .report-item:nth-child(-n + 2) {
+        border-bottom: 1px solid #edf0f4;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .relatorios-page .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .relatorios-page .report-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .relatorios-page .report-item {
+        border-right: none;
+
+        border-bottom: 1px solid #edf0f4;
+    }
+
+    .relatorios-page .report-item:last-child {
+        border-bottom: none;
+    }
+
+    .relatorios-page .content-card-header {
+        padding: 20px;
+    }
+
+    .relatorios-page thead th,
+    .relatorios-page tbody td {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+}
+
+
+/* =====================================================
+   PEQUENOS DETALHES
+===================================================== */
+
+.relatorios-page .dashboard-stat-card::after {
+    content: "";
+
+    position: absolute;
+
+    right: 18px;
+    top: 18px;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: #e8ecf2;
+}
