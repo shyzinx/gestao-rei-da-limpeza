@@ -1649,29 +1649,32 @@ tbody tr:hover {
 
 .dashboard-stats {
     display: grid;
-
-    grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-
-    gap: 17px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
 }
 
+/* =========================================================
+   CARD
+========================================================= */
+
 .dashboard-stat-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+
+    min-height: 132px;
+
+    padding: 21px;
+
     background: #ffffff;
 
-    border: 1px solid var(--border);
+    border: 1px solid #e5e9f0;
+    border-radius: 15px;
 
-    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
 
-    padding: 20px;
-
-    display: flex;
-
-    align-items: flex-start;
-
-    gap: 14px;
-
-    box-shadow: var(--shadow-sm);
+    overflow: hidden;
 
     transition:
         transform 0.2s ease,
@@ -1682,65 +1685,76 @@ tbody tr:hover {
 .dashboard-stat-card:hover {
     transform: translateY(-2px);
 
-    box-shadow: var(--shadow-md);
+    border-color: #d9dee8;
 
-    border-color: #dce2ea;
+    box-shadow:
+        0 8px 22px rgba(15, 23, 42, 0.07);
 }
 
+/* =========================================================
+   ÍCONE
+========================================================= */
+
 .dashboard-stat-icon {
-    width: 46px;
-    height: 46px;
-
-    min-width: 46px;
-
-    border-radius: 12px;
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
-    font-size: 17px;
+    border-radius: 12px;
 
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 800;
 }
+
+/* CLIENTES */
 
 .dashboard-stat-icon.blue {
     background: #eef3ff;
-
     color: #5274e8;
 }
 
+/* SERVIÇOS */
+
 .dashboard-stat-icon.purple {
     background: #f2edff;
-
     color: #7958d8;
 }
 
-.dashboard-stat-icon.orange {
-    background: #fff3e4;
+/* PENDENTES */
 
-    color: #e58a2d;
+.dashboard-stat-icon.orange {
+    background: #fff4e5;
+    color: #df922f;
 }
+
+/* CONCLUÍDOS */
 
 .dashboard-stat-icon.green {
     background: #eaf8f0;
-
     color: #36a36a;
 }
 
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
 .dashboard-stat-content {
     display: flex;
-
     flex-direction: column;
 
     min-width: 0;
+    padding-top: 1px;
 }
 
 .dashboard-stat-content span {
-    color: #7c8492;
+    color: #858d9b;
 
     font-size: 11px;
+    font-weight: 500;
 
     margin-bottom: 5px;
 }
@@ -1748,19 +1762,20 @@ tbody tr:hover {
 .dashboard-stat-content strong {
     color: #202938;
 
-    font-size: 22px;
-
+    font-size: 23px;
     line-height: 1.2;
 
-    margin-bottom: 5px;
-
     font-weight: 750;
+    letter-spacing: -0.3px;
+
+    margin-bottom: 5px;
 }
 
 .dashboard-stat-content small {
     color: #969daa;
 
     font-size: 10px;
+    line-height: 1.4;
 }
 
 
@@ -1770,35 +1785,62 @@ tbody tr:hover {
 
 .dashboard-main-grid {
     display: grid;
-
     grid-template-columns:
         minmax(0, 1.6fr)
         minmax(320px, 1fr);
-
     gap: 20px;
+    align-items: start;
 }
 
 .dashboard-panel {
     min-width: 0;
+    background: #ffffff;
+    border: 1px solid #e5e9f0;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
 }
 
+.dashboard-panel:hover {
+    transform: translateY(-2px);
+    border-color: #dce2ea;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+}
 
 /* =========================================================
    DASHBOARD — CONTAGEM
 ========================================================= */
 
 .dashboard-count {
-    background: #f1f4f9;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    color: #667080;
+    min-width: 30px;
+    height: 25px;
+
+    padding: 0 9px;
+
+    background: #f4f6f9;
+    border: 1px solid #e8ebf0;
+
+    color: #667085;
 
     border-radius: 20px;
 
-    padding: 5px 10px;
-
     font-size: 10px;
+    font-weight: 700;
 
-    font-weight: 650;
+    line-height: 1;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
 }
 
 
@@ -2707,20 +2749,17 @@ tbody tr:hover {
     font-weight: 800;
 }
 
-.relatorio-finance-card.entrada
-.relatorio-card-icon {
+.relatorio-finance-card.entrada .relatorio-card-icon {
     background: #eaf8f0;
     color: #35a36a;
 }
 
-.relatorio-finance-card.saida
-.relatorio-card-icon {
+.relatorio-finance-card.saida .relatorio-card-icon {
     background: #fff0f1;
     color: #dc626d;
 }
 
-.relatorio-finance-card.saldo
-.relatorio-card-icon {
+.relatorio-finance-card.saldo .relatorio-card-icon {
     background: #eef3ff;
     color: #5875e8;
 }
