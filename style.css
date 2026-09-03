@@ -1643,15 +1643,12 @@ tbody tr:hover {
 }
 
 
-/* =========================================================
-   DASHBOARD — CARDS
-========================================================= */
-
 .dashboard-stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 18px;
 }
+
 
 /* =========================================================
    CARD
@@ -1659,38 +1656,232 @@ tbody tr:hover {
 
 .dashboard-stat-card {
     position: relative;
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
 
-    min-height: 132px;
-
-    padding: 21px;
+    min-height: 122px;
+    padding: 19px;
 
     background: #ffffff;
 
     border: 1px solid #e5e9f0;
     border-radius: 15px;
 
-    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
-
     overflow: hidden;
+
+    box-shadow:
+        0 3px 12px rgba(15, 23, 42, 0.035);
 
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease,
         border-color 0.2s ease;
+
+    /* IMPORTANTE:
+       tira o layout lado a lado */
+    display: block;
 }
 
 .dashboard-stat-card:hover {
     transform: translateY(-2px);
 
-    border-color: #d9dee8;
+    border-color: #dce2ea;
 
     box-shadow:
         0 8px 22px rgba(15, 23, 42, 0.07);
 }
 
+
+/* =========================================================
+   LINHA COLORIDA INFERIOR
+========================================================= */
+
+.dashboard-stat-card::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 3px;
+}
+
+
+/* Azul */
+
+.dashboard-stat-card:has(.dashboard-stat-icon.blue)::after {
+    background: #5875e8;
+}
+
+
+/* Roxo */
+
+.dashboard-stat-card:has(.dashboard-stat-icon.purple)::after {
+    background: #7958d8;
+}
+
+
+/* Laranja */
+
+.dashboard-stat-card:has(.dashboard-stat-icon.orange)::after {
+    background: #df922f;
+}
+
+
+/* Verde */
+
+.dashboard-stat-card:has(.dashboard-stat-icon.green)::after {
+    background: #36a36a;
+}
+
+
+/* =========================================================
+   ÍCONE
+========================================================= */
+
+.dashboard-stat-icon {
+    position: absolute;
+
+    top: 19px;
+    left: 19px;
+
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+
+/* Azul */
+
+.dashboard-stat-icon.blue {
+    background: #eef3ff;
+    color: #5274e8;
+}
+
+
+/* Roxo */
+
+.dashboard-stat-icon.purple {
+    background: #f2edff;
+    color: #7958d8;
+}
+
+
+/* Laranja */
+
+.dashboard-stat-icon.orange {
+    background: #fff4e5;
+    color: #df922f;
+}
+
+
+/* Verde */
+
+.dashboard-stat-icon.green {
+    background: #eaf8f0;
+    color: #36a36a;
+}
+
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.dashboard-stat-content {
+    display: block;
+
+    width: 100%;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   TÍTULO
+========================================================= */
+
+.dashboard-stat-content span {
+    display: block;
+
+    width: 100%;
+
+    padding-top: 3px;
+
+    text-align: right;
+
+    color: #9299a6;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.8px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   VALOR
+========================================================= */
+
+.dashboard-stat-content strong {
+    display: block;
+
+    margin-top: 27px;
+
+    color: #202938;
+
+    font-size: 23px;
+    font-weight: 750;
+
+    line-height: 1.2;
+}
+
+
+/* =========================================================
+   DESCRIÇÃO
+========================================================= */
+
+.dashboard-stat-content small {
+    display: block;
+
+    margin-top: 7px;
+
+    color: #969daa;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 1200px) {
+
+    .dashboard-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+
+}
 /* =========================================================
    ÍCONE
 ========================================================= */
@@ -1850,79 +2041,98 @@ tbody tr:hover {
 
 .dashboard-service-list {
     display: flex;
-
     flex-direction: column;
-
     padding: 0 22px;
 }
 
 .dashboard-service {
     display: grid;
-
-    grid-template-columns:
-        80px 1fr auto;
-
+    grid-template-columns: 82px minmax(0, 1fr) auto;
     align-items: center;
-
     gap: 18px;
 
-    padding: 15px 0;
+    padding: 17px 0;
 
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid #eef0f4;
+
+    transition:
+        background 0.2s ease,
+        padding 0.2s ease;
 }
 
 .dashboard-service:last-child {
     border-bottom: none;
 }
 
+/* =========================================================
+   HORÁRIO
+========================================================= */
+
 .dashboard-service-time {
     display: flex;
-
     flex-direction: column;
-
-    gap: 3px;
+    gap: 4px;
 }
 
 .dashboard-service-time strong {
-    color: #273142;
-
+    color: #202938;
     font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
 }
 
 .dashboard-service-time span {
-    color: #999fac;
-
+    color: #98a2b3;
     font-size: 10px;
+    line-height: 1.2;
 }
+
+/* =========================================================
+   INFORMAÇÕES DO SERVIÇO
+========================================================= */
 
 .dashboard-service-info {
     display: flex;
-
     flex-direction: column;
-
     gap: 4px;
 
     min-width: 0;
 }
 
 .dashboard-service-info strong {
-    color: #303846;
-
+    color: #273142;
     font-size: 13px;
-}
-
-.dashboard-service-info span {
-    color: #8d95a3;
-
-    font-size: 10px;
+    font-weight: 650;
 
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 }
 
+.dashboard-service-info span {
+    color: #8b94a3;
+    font-size: 10px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.dashboard-service .status {
+    justify-self: end;
+}
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.dashboard-service:hover {
+    background: #fafbfc;
+}
 
 /* =========================================================
    DASHBOARD — STATUS
@@ -1930,69 +2140,100 @@ tbody tr:hover {
 
 .dashboard-status-list {
     display: flex;
-
     flex-direction: column;
 
-    padding: 5px 22px 0;
+    padding: 4px 22px 0;
 }
 
 .dashboard-status-item {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
-    padding: 16px 0;
+    padding: 17px 0;
 
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid #edf0f4;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
 .dashboard-status-item:last-child {
     border-bottom: none;
 }
 
+/* =========================================================
+   INFORMAÇÕES DO STATUS
+========================================================= */
+
 .dashboard-status-left {
     display: flex;
-
     align-items: center;
+    gap: 11px;
 
-    gap: 10px;
-
-    color: #596171;
+    color: #475467;
 
     font-size: 12px;
+    font-weight: 600;
 }
+
+/* =========================================================
+   NÚMERO
+========================================================= */
 
 .dashboard-status-item strong {
     color: #273142;
 
-    font-size: 15px;
+    font-size: 18px;
+    font-weight: 750;
+
+    line-height: 1;
 }
 
+/* =========================================================
+   BOLINHA DE STATUS
+========================================================= */
+
 .dashboard-status-dot {
-    width: 8px;
-    height: 8px;
+    width: 9px;
+    height: 9px;
+    min-width: 9px;
 
     border-radius: 50%;
 }
+
+/* AGENDADOS */
 
 .dashboard-status-dot.scheduled {
     background: #5875e8;
 }
 
+/* PENDENTES */
+
 .dashboard-status-dot.pending {
-    background: #e6a548;
+    background: #df922f;
 }
 
+/* CONCLUÍDOS */
+
 .dashboard-status-dot.completed {
-    background: #4ca875;
+    background: #36a36a;
 }
+
+/* CANCELADOS */
 
 .dashboard-status-dot.cancelled {
     background: #dc626d;
 }
 
+/* =========================================================
+   HOVER
+========================================================= */
+
+.dashboard-status-item:hover {
+    background: #fafbfc;
+}
 
 /* =========================================================
    DASHBOARD — VAZIO
