@@ -1971,17 +1971,22 @@ tbody tr:hover {
 
 
 /* =========================================================
-   DASHBOARD — GRID
+   DASHBOARD — AJUSTE VISUAL FINAL
 ========================================================= */
+
+/* GRID PRINCIPAL */
 
 .dashboard-main-grid {
     display: grid;
-    grid-template-columns:
-        minmax(0, 1.6fr)
-        minmax(320px, 1fr);
-    gap: 20px;
-    align-items: start;
+    grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.85fr);
+    gap: 18px;
+    align-items: stretch;
 }
+
+
+/* =========================================================
+   PAINÉIS
+========================================================= */
 
 .dashboard-panel {
     min-width: 0;
@@ -1989,17 +1994,229 @@ tbody tr:hover {
     border: 1px solid #e5e9f0;
     border-radius: 15px;
     overflow: hidden;
+
     box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
 }
 
-.dashboard-panel:hover {
-    transform: translateY(-2px);
-    border-color: #dce2ea;
-    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.dashboard-panel .panel-header {
+    min-height: 58px;
+
+    padding: 15px 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.dashboard-panel .panel-header h2 {
+    margin: 0;
+
+    color: #202938;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.dashboard-panel .panel-header p {
+    margin: 4px 0 0;
+
+    color: #8a93a2;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   SERVIÇOS
+========================================================= */
+
+.dashboard-service-list {
+    padding: 0 18px;
+}
+
+.dashboard-service {
+    display: grid;
+
+    grid-template-columns: 65px minmax(0, 1fr) auto;
+
+    align-items: center;
+
+    gap: 15px;
+
+    min-height: 70px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.dashboard-service:last-child {
+    border-bottom: none;
+}
+
+
+/* HORÁRIO */
+
+.dashboard-service-time {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.dashboard-service-time strong {
+    color: #273142;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.dashboard-service-time span {
+    color: #969daa;
+
+    font-size: 9px;
+}
+
+
+/* INFORMAÇÕES */
+
+.dashboard-service-info {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    min-width: 0;
+}
+
+.dashboard-service-info strong {
+    color: #303846;
+
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.dashboard-service-info span {
+    color: #8d95a3;
+
+    font-size: 9px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.dashboard-status-list {
+    padding: 0 18px;
+}
+
+.dashboard-status-item {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 53px;
+
+    padding: 13px 0;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.dashboard-status-item:last-child {
+    border-bottom: none;
+}
+
+.dashboard-status-left {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    color: #596171;
+
+    font-size: 10px;
+}
+
+.dashboard-status-item strong {
+    color: #273142;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.dashboard-status-dot {
+    width: 7px;
+    height: 7px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   CONTAGEM
+========================================================= */
+
+.dashboard-count {
+    background: #f1f4f9;
+
+    color: #667080;
+
+    border-radius: 20px;
+
+    padding: 5px 10px;
+
+    font-size: 9px;
+    font-weight: 650;
+}
+
+
+/* =========================================================
+   PRÓXIMOS SERVIÇOS
+========================================================= */
+
+.dashboard-main-grid + .panel {
+    margin-top: 18px;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .dashboard-main-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .dashboard-service {
+        grid-template-columns: 60px minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .dashboard-service .status {
+        grid-column: 2;
+        justify-self: start;
+    }
+
 }
 
 /* =========================================================
@@ -2063,6 +2280,7 @@ tbody tr:hover {
 .dashboard-service:last-child {
     border-bottom: none;
 }
+
 
 /* =========================================================
    HORÁRIO
