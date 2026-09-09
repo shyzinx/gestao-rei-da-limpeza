@@ -450,12 +450,13 @@ async function abrirFormularioCliente(id = null) {
                         </label>
 
                         <input
-                            type="email"
-                            id="cliente-email"
-                            placeholder="cliente@email.com"
-                            value="${cliente ? cliente.email : ""}"
+                         type="email"
+                         id="cliente-email"
+                         placeholder="cliente@email.com"
+                         value="${cliente ? cliente.email : ""}"
+                        pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+                        title="Informe um e-mail válido, como cliente@gmail.com ou contato@empresa.com.br"
                         >
-
                     </div>
 
                 </div>
