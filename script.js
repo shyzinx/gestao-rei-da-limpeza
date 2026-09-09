@@ -590,21 +590,21 @@ if (email) {
 
         if (!resultado.valido) {
 
-            alert(resultado.mensagem);
+         mostrarAvisoEmail(resultado.mensagem);
 
-            return;
+          return;
 
         }
 
     } catch (erro) {
 
-        alert(
-            "Não foi possível verificar o domínio do e-mail. Tente novamente."
-        );
+    mostrarAvisoEmail(
+        "Não foi possível verificar o domínio do e-mail. Tente novamente."
+    );
 
-        return;
+    return;
 
-    }
+}
 
 }
 
@@ -3419,7 +3419,57 @@ function formatarTituloAgenda(data) {
     );
 
 }
+// =====================================================
+// AVISO DE E-MAIL
+// =====================================================
 
+function mostrarAvisoEmail(mensagem) {
+
+    const modal = document.createElement("div");
+
+    modal.className = "email-alert-overlay";
+
+    modal.innerHTML = `
+        <div class="email-alert-modal">
+
+            <div class="email-alert-icon">
+                !
+            </div>
+
+            <div class="email-alert-content">
+
+                <h2>
+                    E-mail não verificado
+                </h2>
+
+                <p>
+                    ${mensagem}
+                </p>
+
+            </div>
+
+            <div class="email-alert-actions">
+
+                <button
+                    type="button"
+                    class="email-alert-button"
+                >
+                    Entendi
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal
+        .querySelector(".email-alert-button")
+        .addEventListener("click", () => {
+            modal.remove();
+        });
+}
 
 // =====================================================
 // MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
