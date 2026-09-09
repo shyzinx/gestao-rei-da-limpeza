@@ -454,7 +454,7 @@ async function abrirFormularioCliente(id = null) {
                          id="cliente-email"
                          placeholder="cliente@email.com"
                          value="${cliente ? cliente.email : ""}"
-                        pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+                         pattern="^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
                         title="Informe um e-mail válido, como cliente@gmail.com ou contato@empresa.com.br"
                         >
                     </div>
@@ -558,14 +558,58 @@ async function abrirFormularioCliente(id = null) {
 
             if (!nome || !telefone) {
 
-                alert("Nome e telefone são obrigatórios.");
+    alert("Nome e telefone são obrigatórios.");
 
-                return;
+    return;
 
+}
+
+
+if (email) {
+
+    try {
+
+        const resposta = await fetch(
+            "/.netlify/functions/verificar-email",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    email: email
+                })
             }
+        );
 
 
-            const clientesAtuais = await pegarClientes();
+        const resultado = await resposta.json();
+
+
+        if (!resultado.valido) {
+
+            alert(resultado.mensagem);
+
+            return;
+
+        }
+
+    } catch (erro) {
+
+        alert(
+            "Não foi possível verificar o domínio do e-mail. Tente novamente."
+        );
+
+        return;
+
+    }
+
+}
+
+
+const clientesAtuais = await pegarClientes();
 
 
             if (cliente) {
