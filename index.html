@@ -11,7 +11,179 @@
 </head>
 <body>
 
-    <div class="app">
+<!-- =====================================================
+     TELA DE LOGIN
+===================================================== -->
+
+<div id="tela-login" class="login-screen">
+
+    <div class="login-card">
+
+        <div class="login-logo">
+            <div class="login-logo-icon">R</div>
+
+            <div>
+                <strong>Rei da</strong>
+                <span>Limpeza</span>
+            </div>
+        </div>
+
+        <div class="login-header">
+
+            <span>ACESSO AO SISTEMA</span>
+
+            <h1>Bem-vindo de volta</h1>
+
+            <p>
+                Entre para acessar a gestão do Rei da Limpeza.
+            </p>
+
+        </div>
+
+        <form id="login-form">
+
+            <div class="login-form-group">
+
+                <label for="login-email">
+                    E-mail
+                </label>
+
+                <input
+                    type="email"
+                    id="login-email"
+                    placeholder="seu@email.com"
+                    required
+                >
+
+            </div>
+
+            <div class="login-form-group">
+
+                <label for="login-password">
+                    Senha
+                </label>
+
+                <input
+                    type="password"
+                    id="login-password"
+                    placeholder="Digite sua senha"
+                    required
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="login-button"
+            >
+                Entrar
+            </button>
+
+        </form>
+
+        <div class="login-divider">
+            <span>ou</span>
+        </div>
+
+        <button
+            type="button"
+            id="mostrar-cadastro"
+            class="login-secondary-button"
+        >
+            Criar uma conta
+        </button>
+
+        <div
+            id="cadastro-container"
+            class="cadastro-container"
+            style="display: none;"
+        >
+
+            <div class="login-header cadastro-header">
+
+                <span>NOVO USUÁRIO</span>
+
+                <h2>Criar conta</h2>
+
+                <p>
+                    Cadastre seu acesso ao sistema.
+                </p>
+
+            </div>
+
+            <form id="cadastro-form">
+
+                <div class="login-form-group">
+
+                    <label for="cadastro-email">
+                        E-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="cadastro-email"
+                        placeholder="seu@email.com"
+                        required
+                    >
+
+                </div>
+
+                <div class="login-form-group">
+
+                    <label for="cadastro-password">
+                        Senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="cadastro-password"
+                        placeholder="Mínimo de 6 caracteres"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+                <div class="login-form-group">
+
+                    <label for="cadastro-password-confirm">
+                        Confirmar senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="cadastro-password-confirm"
+                        placeholder="Digite a senha novamente"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="login-button"
+                >
+                    Criar conta
+                </button>
+
+            </form>
+
+            <button
+                type="button"
+                id="voltar-login"
+                class="login-back-button"
+            >
+                ← Voltar para o login
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <div id="sistema" class="app" style="display: none;">
 
         <!-- SIDEBAR -->
         <aside class="sidebar">
@@ -37,8 +209,8 @@
 
                 <button class="nav-item" data-page="clientes">
                     <span class="nav-icon">♙</span>
-                    <span>Clientes</span
-                </button>
+                    <span>Clientes</span>
+                    </button>
 
                 <button class="nav-item" data-page="servicos">
                     <span class="nav-icon">✓</span>
