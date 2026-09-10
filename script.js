@@ -8,127 +8,6 @@ const supabaseClient = window.supabase.createClient(
 );
 
 // =====================================================
-// AUTENTICAÇÃO
-// =====================================================
-
-async function verificarSessao() {
-
-    const { data, error } =
-        await supabaseClient.auth.getSession();
-
-    if (error) {
-        console.error("Erro ao verificar sessão:", error);
-        mostrarTelaLogin();
-        return;
-    }
-
-    if (data.session) {
-        entrarNoSistema();
-    } else {
-        mostrarTelaLogin();
-    }
-}
-
-
-// =====================================================
-// MOSTRAR LOGIN
-// =====================================================
-
-function mostrarTelaLogin() {
-
-    const telaLogin =
-        document.querySelector("#tela-login");
-
-    const sistema =
-        document.querySelector("#sistema");
-
-    if (telaLogin) {
-        telaLogin.style.display = "flex";
-    }
-
-    if (sistema) {
-        sistema.style.display = "none";
-    }
-}
-
-
-// =====================================================
-// ENTRAR NO SISTEMA
-// =====================================================
-
-function entrarNoSistema() {
-
-    const telaLogin =
-        document.querySelector("#tela-login");
-
-    const sistema =
-        document.querySelector("#sistema");
-
-    if (telaLogin) {
-        telaLogin.style.display = "none";
-    }
-
-    if (sistema) {
-        sistema.style.display = "";
-    }
-
-    renderDashboard();
-}
-
-
-// =====================================================
-// LOGIN
-// =====================================================
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const loginForm =
-        document.querySelector("#login-form");
-
-    if (!loginForm) {
-        return;
-    }
-
-    loginForm.addEventListener(
-        "submit",
-        async (event) => {
-
-            event.preventDefault();
-
-            const email =
-                document
-                    .querySelector("#login-email")
-                    .value
-                    .trim();
-
-            const password =
-                document
-                    .querySelector("#login-password")
-                    .value;
-
-            const { error } =
-                await supabaseClient.auth
-                    .signInWithPassword({
-                        email: email,
-                        password: password
-                    });
-
-            if (error) {
-
-                alert(error.message);
-
-                return;
-            }
-
-            entrarNoSistema();
-
-        }
-    );
-
-});
-
-
-// =====================================================
 // CADASTRO
 // =====================================================
 
@@ -261,26 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-
-// =====================================================
-// ALTERAÇÃO DE SESSÃO
-// =====================================================
-
-supabaseClient.auth.onAuthStateChange(
-    (event, session) => {
-
-        if (session) {
-
-            entrarNoSistema();
-
-        } else {
-
-            mostrarTelaLogin();
-
-        }
-
-    }
-);
 
 const navItems = document.querySelectorAll(".nav-item");
 
@@ -4872,6 +4731,7 @@ async function verificarSessao() {
 
     const { data, error } =
         await supabaseClient.auth.getSession();
+        console.log("SESSÃO ATUAL:", data.session);
 
     if (error) {
         console.error("Erro ao verificar sessão:", error);
@@ -4930,6 +4790,7 @@ function entrarNoSistema() {
     }
 
     renderDashboard();
+
 }
 
 
