@@ -100,15 +100,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             if (password !== confirmPassword) {
-
-                alert(
-                    "As senhas informadas não são iguais."
-                );
-
-                return;
-
+                mostrarAviso(
+               "As senhas informadas não são iguais.",
+              "Senhas diferentes"
+             );
+  
+              return;
             }
-
 
             const { error } =
                 await supabaseClient.auth.signUp({
@@ -119,15 +117,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (error) {
 
-                alert(error.message);
+                mostrarAviso(error.message, "Não foi possível entrar");
 
-                return;
-
+               return;
             }
 
 
-            alert(
-                "Conta criada com sucesso. Verifique seu e-mail para confirmar o cadastro antes de entrar no sistema."
+            mostrarAviso(
+             "Conta criada com sucesso. Verifique seu e-mail para confirmar o cadastro antes de entrar no sistema.",
+              "Conta criada"
             );
 
 
@@ -691,7 +689,10 @@ async function abrirFormularioCliente(id = null) {
 
             if (!nome || !telefone) {
 
-    alert("Nome e telefone são obrigatórios.");
+                  mostrarAviso(
+                  "Nome e telefone são obrigatórios.",
+                 "Dados obrigatórios"
+                );
 
     return;
 
@@ -3552,6 +3553,58 @@ function formatarTituloAgenda(data) {
     );
 
 }
+
+// =====================================================
+// AVISO DO SISTEMA
+// =====================================================
+function mostrarAviso(mensagem, titulo = "Atenção") {
+
+    const modal = document.createElement("div");
+
+    modal.className = "email-alert-overlay";
+
+    modal.innerHTML = `
+        <div class="email-alert-modal">
+
+            <div class="email-alert-icon">
+                !
+            </div>
+
+            <div class="email-alert-content">
+
+                <h2>
+                    ${titulo}
+                </h2>
+
+                <p>
+                    ${mensagem}
+                </p>
+
+            </div>
+
+            <div class="email-alert-actions">
+
+                <button
+                    type="button"
+                    class="email-alert-button"
+                >
+                    Entendi
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal
+        .querySelector(".email-alert-button")
+        .addEventListener("click", () => {
+            modal.remove();
+        });
+}
+
 // =====================================================
 // AVISO DE E-MAIL
 // =====================================================
@@ -4842,11 +4895,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (error) {
 
-                alert(error.message);
+    mostrarAviso(
+        error.message,
+        "Não foi possível criar a conta"
+    );
 
-                return;
-            }
-
+    return;
+}
             entrarNoSistema();
 
         }
