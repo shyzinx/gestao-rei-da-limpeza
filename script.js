@@ -2879,7 +2879,10 @@ async function abrirFormularioServico(id = null, origem = "servicos") {
                 valor < 0
             ) {
 
-                alert("Preencha todos os campos obrigatórios.");
+                mostrarAviso(
+                "Preencha todos os campos obrigatórios.",
+                "Dados obrigatórios"
+                );
 
                 return;
 
@@ -2899,7 +2902,10 @@ async function abrirFormularioServico(id = null, origem = "servicos") {
     );
 
     if (indice === -1) {
-        alert("Não foi possível encontrar o serviço para editar.");
+           mostrarAviso(
+          "Não foi possível encontrar o serviço para editar.",
+          "Erro"
+        );
         return;
     }
 
@@ -3754,7 +3760,11 @@ async function abrirConfirmacaoExclusao(id, nomeCliente, origem) {
 
     if (error) {
         console.error("Erro ao excluir cliente:", error);
-        alert("Erro ao excluir cliente.");
+        mostrarAviso(
+         "Erro ao excluir cliente.",
+         "Erro ao excluir"
+        );
+        
         return;
     }
 
@@ -3777,7 +3787,10 @@ async function abrirConfirmacaoExclusao(id, nomeCliente, origem) {
 
 if (error) {
     console.error("Erro ao excluir serviço:", error);
-    alert("Erro ao excluir serviço.");
+    mostrarAviso(
+        "Erro ao excluir serviço.",
+        "Erro ao excluir"
+    );
     return;
 }
 
@@ -4660,8 +4673,9 @@ async function abrirFormularioFinanceiro() {
                 valor < 0
             ) {
 
-                alert(
-                    "Preencha todos os campos obrigatórios."
+                mostrarAviso(
+                 "Preencha todos os campos obrigatórios.",
+                 "Dados obrigatórios"
                 );
 
                 return;
@@ -4675,11 +4689,13 @@ async function abrirFormularioFinanceiro() {
                 !servicoId
             ) {
 
-                alert(
-                    "Selecione o serviço que foi pago."
+                mostrarAviso(
+                    "Selecione o serviço que foi pago.",
+                    "Serviço não selecionado"
                 );
 
                 return;
+
 
             }
 
@@ -4705,8 +4721,9 @@ async function abrirFormularioFinanceiro() {
                         erroVerificacao
                     );
 
-                    alert(
-                        "Erro ao verificar se o serviço já foi pago."
+                    mostrarAviso(
+                        "Erro ao verificar se o serviço já foi pago.",
+                        "Erro na verificação"
                     );
 
                     return;
@@ -4716,8 +4733,9 @@ async function abrirFormularioFinanceiro() {
 
                 if (pagamentoExistente) {
 
-                    alert(
-                        "Esse serviço já possui um pagamento registrado."
+                    mostrarAviso(
+                     "Esse serviço já possui um pagamento registrado.",
+                      "Pagamento já registrado"
                     );
 
                     return;
@@ -4756,8 +4774,9 @@ async function abrirFormularioFinanceiro() {
         error
     );
 
-    alert(
-        "Erro: " + error.message
+    mostrarAviso(
+        "Erro: " + error.message,
+        "Erro ao salvar"
     );
 
     return;
@@ -4897,7 +4916,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     mostrarAviso(
         error.message,
-        "Não foi possível criar a conta"
+        "Não foi possível acessar a conta"
     );
 
     return;
