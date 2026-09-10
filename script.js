@@ -4745,7 +4745,16 @@ async function verificarSessao() {
         mostrarTelaLogin();
     }
 }
+async function sairDaConta() {
+    const { error } = await supabaseClient.auth.signOut();
 
+    if (error) {
+        console.error("Erro ao sair:", error);
+        return;
+    }
+
+    mostrarTelaLogin();
+}
 
 // =====================================================
 // MOSTRAR LOGIN
