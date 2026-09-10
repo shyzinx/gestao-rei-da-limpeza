@@ -7,6 +7,280 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_PUBLISHABLE_KEY
 );
 
+// =====================================================
+// AUTENTICAÇÃO
+// =====================================================
+
+async function verificarSessao() {
+
+    const { data, error } =
+        await supabaseClient.auth.getSession();
+
+    if (error) {
+        console.error("Erro ao verificar sessão:", error);
+        mostrarTelaLogin();
+        return;
+    }
+
+    if (data.session) {
+        entrarNoSistema();
+    } else {
+        mostrarTelaLogin();
+    }
+}
+
+
+// =====================================================
+// MOSTRAR LOGIN
+// =====================================================
+
+function mostrarTelaLogin() {
+
+    const telaLogin =
+        document.querySelector("#tela-login");
+
+    const sistema =
+        document.querySelector("#sistema");
+
+    if (telaLogin) {
+        telaLogin.style.display = "flex";
+    }
+
+    if (sistema) {
+        sistema.style.display = "none";
+    }
+}
+
+
+// =====================================================
+// ENTRAR NO SISTEMA
+// =====================================================
+
+function entrarNoSistema() {
+
+    const telaLogin =
+        document.querySelector("#tela-login");
+
+    const sistema =
+        document.querySelector("#sistema");
+
+    if (telaLogin) {
+        telaLogin.style.display = "none";
+    }
+
+    if (sistema) {
+        sistema.style.display = "";
+    }
+
+    renderDashboard();
+}
+
+
+// =====================================================
+// LOGIN
+// =====================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const loginForm =
+        document.querySelector("#login-form");
+
+    if (!loginForm) {
+        return;
+    }
+
+    loginForm.addEventListener(
+        "submit",
+        async (event) => {
+
+            event.preventDefault();
+
+            const email =
+                document
+                    .querySelector("#login-email")
+                    .value
+                    .trim();
+
+            const password =
+                document
+                    .querySelector("#login-password")
+                    .value;
+
+            const { error } =
+                await supabaseClient.auth
+                    .signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+            if (error) {
+
+                alert(error.message);
+
+                return;
+            }
+
+            entrarNoSistema();
+
+        }
+    );
+
+});
+
+
+// =====================================================
+// CADASTRO
+// =====================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const cadastroForm =
+        document.querySelector("#cadastro-form");
+
+    const mostrarCadastro =
+        document.querySelector("#mostrar-cadastro");
+
+    const voltarLogin =
+        document.querySelector("#voltar-login");
+
+    const loginForm =
+        document.querySelector("#login-form");
+
+    const cadastroContainer =
+        document.querySelector("#cadastro-container");
+
+
+    if (
+        !cadastroForm ||
+        !mostrarCadastro ||
+        !voltarLogin ||
+        !loginForm ||
+        !cadastroContainer
+    ) {
+        return;
+    }
+
+
+    mostrarCadastro.addEventListener(
+        "click",
+        () => {
+
+            loginForm.style.display = "none";
+
+            document
+                .querySelector(".login-divider")
+                .style.display = "none";
+
+            mostrarCadastro.style.display = "none";
+
+            cadastroContainer.style.display = "block";
+
+        }
+    );
+
+
+    voltarLogin.addEventListener(
+        "click",
+        () => {
+
+            cadastroContainer.style.display = "none";
+
+            loginForm.style.display = "block";
+
+            document
+                .querySelector(".login-divider")
+                .style.display = "flex";
+
+            mostrarCadastro.style.display = "block";
+
+        }
+    );
+
+
+    cadastroForm.addEventListener(
+        "submit",
+        async (event) => {
+
+            event.preventDefault();
+
+            const email =
+                document
+                    .querySelector("#cadastro-email")
+                    .value
+                    .trim();
+
+            const password =
+                document
+                    .querySelector("#cadastro-password")
+                    .value;
+
+            const confirmPassword =
+                document
+                    .querySelector("#cadastro-password-confirm")
+                    .value;
+
+
+            if (password !== confirmPassword) {
+
+                alert(
+                    "As senhas informadas não são iguais."
+                );
+
+                return;
+
+            }
+
+
+            const { error } =
+                await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password
+                });
+
+
+            if (error) {
+
+                alert(error.message);
+
+                return;
+
+            }
+
+
+            alert(
+                "Conta criada com sucesso. Verifique seu e-mail para confirmar o cadastro antes de entrar no sistema."
+            );
+
+
+            cadastroForm.reset();
+
+            voltarLogin.click();
+
+        }
+    );
+
+});
+
+
+// =====================================================
+// ALTERAÇÃO DE SESSÃO
+// =====================================================
+
+supabaseClient.auth.onAuthStateChange(
+    (event, session) => {
+
+        if (session) {
+
+            entrarNoSistema();
+
+        } else {
+
+            mostrarTelaLogin();
+
+        }
+
+    }
+);
 
 const navItems = document.querySelectorAll(".nav-item");
 
@@ -4591,10 +4865,149 @@ async function abrirFormularioFinanceiro() {
 }
 
 // =====================================================
-// INICIALIZAÇÃO DO SISTEMA
+// AUTENTICAÇÃO
+// =====================================================
+
+async function verificarSessao() {
+
+    const { data, error } =
+        await supabaseClient.auth.getSession();
+
+    if (error) {
+        console.error("Erro ao verificar sessão:", error);
+        mostrarTelaLogin();
+        return;
+    }
+
+    if (data.session) {
+        entrarNoSistema();
+    } else {
+        mostrarTelaLogin();
+    }
+}
+
+
+// =====================================================
+// MOSTRAR LOGIN
+// =====================================================
+
+function mostrarTelaLogin() {
+
+    const telaLogin =
+        document.querySelector("#tela-login");
+
+    const sistema =
+        document.querySelector("#sistema");
+
+    if (telaLogin) {
+        telaLogin.style.display = "flex";
+    }
+
+    if (sistema) {
+        sistema.style.display = "none";
+    }
+}
+
+
+// =====================================================
+// ENTRAR NO SISTEMA
+// =====================================================
+
+function entrarNoSistema() {
+
+    const telaLogin =
+        document.querySelector("#tela-login");
+
+    const sistema =
+        document.querySelector("#sistema");
+
+    if (telaLogin) {
+        telaLogin.style.display = "none";
+    }
+
+    if (sistema) {
+        sistema.style.display = "";
+    }
+
+    renderDashboard();
+}
+
+
+// =====================================================
+// LOGIN
 // =====================================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    renderDashboard();
+    const loginForm =
+        document.querySelector("#login-form");
+
+    if (!loginForm) {
+        return;
+    }
+
+    loginForm.addEventListener(
+        "submit",
+        async (event) => {
+
+            event.preventDefault();
+
+            const email =
+                document
+                    .querySelector("#login-email")
+                    .value
+                    .trim();
+
+            const password =
+                document
+                    .querySelector("#login-password")
+                    .value;
+
+            const { error } =
+                await supabaseClient.auth
+                    .signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+            if (error) {
+
+                alert(error.message);
+
+                return;
+            }
+
+            entrarNoSistema();
+
+        }
+    );
+
+});
+
+
+// =====================================================
+// ALTERAÇÃO DE SESSÃO
+// =====================================================
+
+supabaseClient.auth.onAuthStateChange(
+    (event, session) => {
+
+        if (session) {
+            entrarNoSistema();
+        } else {
+            mostrarTelaLogin();
+        }
+
+    }
+);
+
+
+// =====================================================
+// INICIALIZAÇÃO DO SISTEMA
+// =====================================================
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    await verificarSessao();
+
 });
