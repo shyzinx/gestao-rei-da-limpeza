@@ -3670,13 +3670,13 @@ tbody tr:hover {
 
     padding: 30px;
 
-    background:
-        radial-gradient(
-            circle at top left,
-            #0f3f2a 0%,
-            #081f15 45%,
-            #06150f 100%
-        );
+  background:
+    radial-gradient(
+        circle at top left,
+        #2563eb 0%,
+        #1d4ed8 45%,
+        #172554 100%
+    );
 }
 
 .login-card {
@@ -3713,7 +3713,7 @@ tbody tr:hover {
 
     border-radius: 12px;
 
-    background: #0f3f2a;
+    background: #2563eb;
     color: #ffffff;
 
     font-size: 20px;
@@ -3735,7 +3735,7 @@ tbody tr:hover {
 }
 
 .login-logo span {
-    color: #0f3f2a;
+    color: #2563eb;
 
     font-size: 12px;
     font-weight: 650;
@@ -3811,10 +3811,10 @@ tbody tr:hover {
 }
 
 .login-form-group input:focus {
-    border-color: #0f3f2a;
+    border-color: #2563eb;
 
     box-shadow:
-        0 0 0 3px rgba(15, 63, 42, 0.08);
+    0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
 .login-button {
@@ -3824,7 +3824,7 @@ tbody tr:hover {
     border: none;
     border-radius: 9px;
 
-    background: #0f3f2a;
+    background: #2563eb;
     color: #ffffff;
 
     font-family: inherit;
@@ -3838,7 +3838,7 @@ tbody tr:hover {
 }
 
 .login-button:hover {
-    background: #0b3020;
+    background: #1d4ed8;
 
     transform: translateY(-1px);
 }
@@ -3875,7 +3875,7 @@ tbody tr:hover {
     border-radius: 9px;
 
     background: #ffffff;
-    color: #0f3f2a;
+    color: #2563eb;
 
     font-family: inherit;
 
@@ -3890,7 +3890,7 @@ tbody tr:hover {
 .login-secondary-button:hover {
     background: #f4f8f6;
 
-    border-color: #0f3f2a;
+    border-color: #2563eb;
 }
 
 .cadastro-container {
@@ -3933,5 +3933,5 @@ tbody tr:hover {
 }
 
 .login-back-button:hover {
-    color: #0f3f2a;
+    color: #2563eb;
 }
