@@ -3684,7 +3684,7 @@ tbody tr:hover {
 
     padding: 38px;
 
-    background: rgba(255, 255, 255, 0.97);
+    background: rgba(248, 248, 248, 0.97);
 
     border-radius: 20px;
 
@@ -3888,7 +3888,7 @@ tbody tr:hover {
 }
 
 .login-secondary-button:hover {
-    background: #f4f8f6;
+    background: #7aa790;
 
     border-color: #2563eb;
 }
