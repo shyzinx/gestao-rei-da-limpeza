@@ -3300,6 +3300,16 @@ let dataAgendaAtual = new Date();
 
 function renderAgenda() {
 
+    const ano = dataAgendaAtual.getFullYear();
+    const mes = String(
+        dataAgendaAtual.getMonth() + 1
+    ).padStart(2, "0");
+    const dia = String(
+        dataAgendaAtual.getDate()
+    ).padStart(2, "0");
+
+    const dataInput = `${ano}-${mes}-${dia}`;
+
     pageContent.innerHTML = `
 
         <div class="agenda-page">
@@ -3315,12 +3325,14 @@ function renderAgenda() {
                         ‹
                     </button>
 
+
                     <button
                         class="agenda-hoje"
                         id="agenda-hoje"
                     >
                         Hoje
                     </button>
+
 
                     <button
                         class="agenda-nav-button"
@@ -3341,6 +3353,21 @@ function renderAgenda() {
                 </div>
 
 
+                <div class="agenda-date-picker">
+
+                    <label for="agenda-seletor-data">
+                        Ir para data
+                    </label>
+
+                    <input
+                        type="date"
+                        id="agenda-seletor-data"
+                        value="${dataInput}"
+                    >
+
+                </div>
+
+
                 <button
                     class="primary-button"
                     id="agenda-novo-servico"
@@ -3350,6 +3377,119 @@ function renderAgenda() {
 
             </div>
 
+
+            <!-- RESUMO DO DIA -->
+
+            <div class="agenda-resumo">
+
+                <div class="agenda-resumo-item">
+
+                    <div class="agenda-resumo-icon">
+                        #
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Serviços
+                        </span>
+
+                        <strong id="agenda-resumo-servicos">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="agenda-resumo-item">
+
+                    <div class="agenda-resumo-icon valor">
+                        R$
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Valor previsto
+                        </span>
+
+                        <strong id="agenda-resumo-valor">
+                            R$ 0,00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="agenda-resumo-item">
+
+                    <div class="agenda-resumo-status agendado">
+                        ●
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Agendados
+                        </span>
+
+                        <strong id="agenda-resumo-agendados">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="agenda-resumo-item">
+
+                    <div class="agenda-resumo-status pendente">
+                        ●
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Pendentes
+                        </span>
+
+                        <strong id="agenda-resumo-pendentes">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="agenda-resumo-item">
+
+                    <div class="agenda-resumo-status concluido">
+                        ●
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Concluídos
+                        </span>
+
+                        <strong id="agenda-resumo-concluidos">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SERVIÇOS -->
 
             <div class="panel">
 
@@ -3385,6 +3525,10 @@ function renderAgenda() {
     atualizarAgenda();
 
 
+    // =================================================
+    // DIA ANTERIOR
+    // =================================================
+
     document
         .querySelector("#agenda-anterior")
         .addEventListener("click", () => {
@@ -3393,10 +3537,14 @@ function renderAgenda() {
                 dataAgendaAtual.getDate() - 1
             );
 
-            atualizarAgenda();
+            renderAgenda();
 
         });
 
+
+    // =================================================
+    // PRÓXIMO DIA
+    // =================================================
 
     document
         .querySelector("#agenda-proximo")
@@ -3406,10 +3554,14 @@ function renderAgenda() {
                 dataAgendaAtual.getDate() + 1
             );
 
-            atualizarAgenda();
+            renderAgenda();
 
         });
 
+
+    // =================================================
+    // HOJE
+    // =================================================
 
     document
         .querySelector("#agenda-hoje")
@@ -3417,19 +3569,55 @@ function renderAgenda() {
 
             dataAgendaAtual = new Date();
 
-            atualizarAgenda();
+            renderAgenda();
 
         });
 
 
-  document
-    .querySelector("#agenda-novo-servico")
-    .addEventListener("click", () => {
+    // =================================================
+    // ESCOLHER DATA
+    // =================================================
 
-        abrirFormularioServico(null, "agenda");
+    document
+        .querySelector("#agenda-seletor-data")
+        .addEventListener("change", event => {
 
-    });
-}
+            const valor = event.target.value;
+
+            if (!valor) {
+                return;
+            }
+
+            const [ano, mes, dia] =
+                valor.split("-");
+
+            dataAgendaAtual =
+                new Date(
+                    Number(ano),
+                    Number(mes) - 1,
+                    Number(dia)
+                );
+
+            renderAgenda();
+
+        });
+
+
+    // =================================================
+    // NOVO SERVIÇO
+    // =================================================
+
+    document
+        .querySelector("#agenda-novo-servico")
+        .addEventListener("click", () => {
+
+            abrirFormularioServico(
+                null,
+                "agenda"
+            );
+
+        });
+    }
 
 
 // =====================================================
@@ -3446,40 +3634,55 @@ async function atualizarAgenda() {
     }
 
 
-    const servicos = await pegarServicos();
-    const clientes = await pegarClientes();
+    const servicos =
+        await pegarServicos();
+
+    const clientes =
+        await pegarClientes();
 
 
     const dataSelecionada =
         formatarDataAgenda(dataAgendaAtual);
 
 
-    const servicosDoDia = servicos
-        .filter(servico => {
+    const servicosDoDia =
+        servicos
+            .filter(servico => {
 
-            return servico.data === dataSelecionada;
+                return servico.data ===
+                    dataSelecionada;
 
-        })
-        .sort((a, b) => {
+            })
+            .sort((a, b) => {
 
-            return a.horario.localeCompare(
-                b.horario
-            );
+                return a.horario.localeCompare(
+                    b.horario
+                );
 
-        });
+            });
 
+
+    // =================================================
+    // TÍTULO
+    // =================================================
 
     const titulo =
-        document.querySelector("#agenda-data-titulo");
+        document.querySelector(
+            "#agenda-data-titulo"
+        );
 
     const subtitulo =
-        document.querySelector("#agenda-data-subtitulo");
+        document.querySelector(
+            "#agenda-data-subtitulo"
+        );
 
 
     if (titulo) {
 
         titulo.textContent =
-            formatarTituloAgenda(dataAgendaAtual);
+            formatarTituloAgenda(
+                dataAgendaAtual
+            );
 
     }
 
@@ -3492,8 +3695,14 @@ async function atualizarAgenda() {
     }
 
 
+    // =================================================
+    // TOTAL
+    // =================================================
+
     const total =
-        document.querySelector("#agenda-total");
+        document.querySelector(
+            "#agenda-total"
+        );
 
 
     if (total) {
@@ -3508,8 +3717,127 @@ async function atualizarAgenda() {
     }
 
 
+    // =================================================
+    // RESUMO
+    // =================================================
+
+    const valorTotal =
+        servicosDoDia.reduce(
+            (total, servico) => {
+
+                return total +
+                    Number(
+                        servico.valor || 0
+                    );
+
+            },
+            0
+        );
+
+
+    const agendados =
+        servicosDoDia.filter(
+            servico =>
+                servico.status === "Agendado"
+        ).length;
+
+
+    const pendentes =
+        servicosDoDia.filter(
+            servico =>
+                servico.status === "Pendente"
+        ).length;
+
+
+    const concluidos =
+        servicosDoDia.filter(
+            servico =>
+                servico.status === "Concluído"
+        ).length;
+
+
+    const resumoServicos =
+        document.querySelector(
+            "#agenda-resumo-servicos"
+        );
+
+
+    const resumoValor =
+        document.querySelector(
+            "#agenda-resumo-valor"
+        );
+
+
+    const resumoAgendados =
+        document.querySelector(
+            "#agenda-resumo-agendados"
+        );
+
+
+    const resumoPendentes =
+        document.querySelector(
+            "#agenda-resumo-pendentes"
+        );
+
+
+    const resumoConcluidos =
+        document.querySelector(
+            "#agenda-resumo-concluidos"
+        );
+
+
+    if (resumoServicos) {
+
+        resumoServicos.textContent =
+            servicosDoDia.length;
+
+    }
+
+
+    if (resumoValor) {
+
+        resumoValor.textContent =
+            `R$ ${valorTotal
+                .toFixed(2)
+                .replace(".", ",")}`;
+
+    }
+
+
+    if (resumoAgendados) {
+
+        resumoAgendados.textContent =
+            agendados;
+
+    }
+
+
+    if (resumoPendentes) {
+
+        resumoPendentes.textContent =
+            pendentes;
+
+    }
+
+
+    if (resumoConcluidos) {
+
+        resumoConcluidos.textContent =
+            concluidos;
+
+    }
+
+
+    // =================================================
+    // LIMPAR LISTA
+    // =================================================
+
     container.innerHTML = "";
 
+
+    // =================================================
+    // NENHUM SERVIÇO
+    // =================================================
 
     if (servicosDoDia.length === 0) {
 
@@ -3542,12 +3870,20 @@ async function atualizarAgenda() {
 
 
         document
-    .querySelector("#agenda-vazia-novo")
-    .addEventListener("click", () => {
+            .querySelector(
+                "#agenda-vazia-novo"
+            )
+            .addEventListener(
+                "click",
+                () => {
 
-        abrirFormularioServico(null, "agenda");
+                    abrirFormularioServico(
+                        null,
+                        "agenda"
+                    );
 
-    });
+                }
+            );
 
 
         return;
@@ -3555,41 +3891,72 @@ async function atualizarAgenda() {
     }
 
 
+    // =================================================
+    // SERVIÇOS
+    // =================================================
+
     servicosDoDia.forEach(servico => {
 
-        const cliente = clientes.find(
-            cliente =>
-                Number(cliente.id) ===
-                Number(servico.clienteId)
-        );
+
+        const cliente =
+            clientes.find(
+                cliente =>
+                    Number(cliente.id) ===
+                    Number(servico.clienteId)
+            );
 
 
-        const nomeCliente = cliente
-            ? cliente.nome
-            : "Cliente não encontrado";
+        const nomeCliente =
+            cliente
+                ? cliente.nome
+                : "Cliente não encontrado";
 
 
-        const iniciais = nomeCliente
-            .split(" ")
-            .map(nome => nome.charAt(0))
-            .slice(0, 2)
-            .join("")
-            .toUpperCase();
+        const iniciais =
+            nomeCliente
+                .split(" ")
+                .map(nome =>
+                    nome.charAt(0)
+                )
+                .slice(0, 2)
+                .join("")
+                .toUpperCase();
 
 
-        let classeStatus = "scheduled";
+        let classeStatus =
+            "scheduled";
 
 
-        if (servico.status === "Concluído") {
-            classeStatus = "completed";
+        if (
+            servico.status ===
+            "Concluído"
+        ) {
+
+            classeStatus =
+                "completed";
+
         }
 
-        if (servico.status === "Pendente") {
-            classeStatus = "pending";
+
+        if (
+            servico.status ===
+            "Pendente"
+        ) {
+
+            classeStatus =
+                "pending";
+
         }
 
-        if (servico.status === "Cancelado") {
-            classeStatus = "cancelled";
+
+        if (
+            servico.status ===
+            "Cancelado"
+        ) {
+
+            classeStatus =
+                "cancelled";
+
         }
 
 
@@ -3597,7 +3964,8 @@ async function atualizarAgenda() {
             document.createElement("div");
 
 
-        item.className = "agenda-servico-item";
+        item.className =
+            "agenda-servico-item";
 
 
         item.innerHTML = `
@@ -3619,6 +3987,7 @@ async function atualizarAgenda() {
                         ${iniciais}
                     </div>
 
+
                     <div>
 
                         <strong>
@@ -3637,12 +4006,17 @@ async function atualizarAgenda() {
                 <div class="agenda-servico-detalhes">
 
                     <span>
-                        R$ ${Number(servico.valor)
-                            .toFixed(2)
-                            .replace(".", ",")}
+                        R$ ${Number(
+                            servico.valor || 0
+                        )
+                        .toFixed(2)
+                        .replace(".", ",")}
                     </span>
 
-                    <span class="status ${classeStatus}">
+
+                    <span
+                        class="status ${classeStatus}"
+                    >
                         ${servico.status}
                     </span>
 
@@ -3660,6 +4034,7 @@ async function atualizarAgenda() {
                     ✎
                 </button>
 
+
                 <button
                     class="action-button delete"
                     title="Excluir"
@@ -3672,27 +4047,33 @@ async function atualizarAgenda() {
         `;
 
 
-      item
-    .querySelector(".edit")
-    .addEventListener("click", () => {
+        item
+            .querySelector(".edit")
+            .addEventListener(
+                "click",
+                () => {
 
-        abrirFormularioServico(
-            servico.id,
-            "agenda"
-        );
+                    abrirFormularioServico(
+                        servico.id,
+                        "agenda"
+                    );
 
-    });
+                }
+            );
 
 
         item
             .querySelector(".delete")
-            .addEventListener("click", () => {
+            .addEventListener(
+                "click",
+                () => {
 
-                excluirServicoAgenda(
-                    servico.id
-                );
+                    excluirServicoAgenda(
+                        servico.id
+                    );
 
-            });
+                }
+            );
 
 
         container.appendChild(item);
