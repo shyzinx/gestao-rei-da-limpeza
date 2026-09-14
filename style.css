@@ -3935,3 +3935,463 @@ tbody tr:hover {
 .login-back-button:hover {
     color: #2563eb;
 }
+
+/* =====================================================
+   RELATÓRIOS
+   ===================================================== */
+
+.relatorios-page {
+    width: 100%;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
+   CABEÇALHO
+   ===================================================== */
+
+.relatorios-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+}
+
+.relatorios-header h2 {
+    margin: 5px 0 6px;
+    font-size: 30px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.relatorios-header p {
+    margin: 0;
+    color: #718096;
+    font-size: 14px;
+}
+
+.relatorios-kicker {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #2563eb;
+}
+
+.relatorios-header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef4ff;
+    color: #2563eb;
+    font-size: 22px;
+}
+
+
+/* =====================================================
+   SEÇÕES
+   ===================================================== */
+
+.relatorios-section {
+    margin-bottom: 34px;
+}
+
+.relatorios-section-title {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 16px;
+}
+
+.relatorios-section-title h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.relatorios-section-title span {
+    font-size: 12px;
+    color: #8993a4;
+}
+
+.relatorios-section-line {
+    height: 1px;
+    flex: 1;
+    background: #e5e9f0;
+}
+
+
+/* =====================================================
+   FINANCEIRO
+   ===================================================== */
+
+.relatorios-finance-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.relatorio-finance-card {
+    background: #ffffff;
+    border: 1px solid #e5e9f0;
+    border-radius: 14px;
+    padding: 20px;
+    min-height: 125px;
+    box-sizing: border-box;
+}
+
+.relatorio-card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.relatorio-card-top span {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    color: #8993a4;
+}
+
+.relatorio-card-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef4ff;
+    color: #2563eb;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.relatorio-finance-card.entrada .relatorio-card-icon {
+    background: #eaf8f0;
+    color: #22a06b;
+}
+
+.relatorio-finance-card.saida .relatorio-card-icon {
+    background: #fff1f1;
+    color: #dc5b65;
+}
+
+.relatorio-finance-card.saldo .relatorio-card-icon {
+    background: #edf7f2;
+    color: #159568;
+}
+
+.relatorio-finance-card strong {
+    display: block;
+    font-size: 22px;
+    color: #172033;
+    margin-bottom: 7px;
+}
+
+.relatorio-finance-card small {
+    color: #8993a4;
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   INDICADORES DE SERVIÇOS
+   ===================================================== */
+
+.relatorios-indicadores {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+
+.relatorio-indicador {
+    background: #ffffff;
+    border: 1px solid #e5e9f0;
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.indicador-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef4ff;
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.indicador-icon.pendentes {
+    background: #fff4e5;
+    color: #f59e0b;
+}
+
+.indicador-icon.concluidos {
+    background: #eaf8f0;
+    color: #22a06b;
+}
+
+.indicador-info span {
+    display: block;
+    color: #8993a4;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.indicador-info strong {
+    display: block;
+    font-size: 19px;
+    color: #172033;
+}
+
+
+/* =====================================================
+   TIPOS DE SERVIÇO
+   ===================================================== */
+
+.relatorios-tipos {
+    background: #ffffff;
+    border: 1px solid #e5e9f0;
+    border-radius: 14px;
+    padding: 8px 22px;
+}
+
+.relatorio-tipo-item {
+    display: grid;
+    grid-template-columns: 220px 1fr 50px;
+    align-items: center;
+    gap: 20px;
+    padding: 17px 0;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.relatorio-tipo-item:last-child {
+    border-bottom: none;
+}
+
+.relatorio-tipo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.relatorio-tipo-info span {
+    color: #172033;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.relatorio-tipo-info strong {
+    color: #8993a4;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.relatorio-tipo-bar {
+    height: 8px;
+    background: #edf1f6;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.relatorio-tipo-bar-fill {
+    height: 100%;
+    background: #2563eb;
+    border-radius: 20px;
+}
+
+.relatorio-tipo-item small {
+    text-align: right;
+    color: #5e6a7e;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   CLIENTES
+   ===================================================== */
+
+.relatorios-clientes-resumo {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.relatorios-clientes-resumo > div {
+    background: #ffffff;
+    border: 1px solid #e5e9f0;
+    border-radius: 14px;
+    padding: 22px;
+}
+
+.relatorios-clientes-resumo span {
+    display: block;
+    color: #8993a4;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.relatorios-clientes-resumo strong {
+    display: block;
+    color: #172033;
+    font-size: 26px;
+}
+
+
+/* =====================================================
+   TABELA
+   ===================================================== */
+
+.relatorios-table-wrapper {
+    background: #ffffff;
+    border: 1px solid #e5e9f0;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.relatorios-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.relatorios-table th {
+    padding: 15px 18px;
+    text-align: left;
+    background: #f8fafc;
+    color: #8993a4;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-weight: 700;
+}
+
+.relatorios-table td {
+    padding: 17px 18px;
+    border-top: 1px solid #edf0f4;
+    font-size: 13px;
+}
+
+.relatorio-data {
+    color: #667085;
+}
+
+.relatorio-descricao {
+    color: #172033;
+    font-weight: 600;
+}
+
+.relatorio-tipo {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.tipo-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #dc5b65;
+}
+
+.relatorio-tipo.entrada {
+    color: #159568;
+}
+
+.relatorio-tipo.entrada .tipo-dot {
+    background: #22a06b;
+}
+
+.relatorio-tipo.saida {
+    color: #dc5b65;
+}
+
+.relatorio-valor {
+    font-size: 13px;
+}
+
+.valor-entrada {
+    color: #159568;
+}
+
+.valor-saida {
+    color: #dc5b65;
+}
+
+
+/* =====================================================
+   VAZIO
+   ===================================================== */
+
+.relatorios-empty {
+    text-align: center;
+    padding: 35px !important;
+    color: #8993a4;
+}
+
+.relatorios-empty div {
+    font-size: 25px;
+    margin-bottom: 8px;
+}
+
+.relatorios-empty strong {
+    display: block;
+    color: #172033;
+    margin-bottom: 5px;
+}
+
+.relatorios-empty span {
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   RESPONSIVO
+   ===================================================== */
+
+@media (max-width: 1100px) {
+
+    .relatorios-finance-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .relatorios-indicadores {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+}
+
+@media (max-width: 750px) {
+
+    .relatorios-page {
+        padding: 20px;
+    }
+
+    .relatorios-finance-grid,
+    .relatorios-indicadores,
+    .relatorios-clientes-resumo {
+        grid-template-columns: 1fr;
+    }
+
+    .relatorio-tipo-item {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .relatorio-tipo-item small {
+        text-align: left;
+    }
+
+}
