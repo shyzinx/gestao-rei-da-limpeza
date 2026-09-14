@@ -821,6 +821,7 @@ navItems.forEach(button => {
     button.addEventListener("click", async function () {
 
         const page = this.getAttribute("data-page");
+        sessionStorage.setItem("paginaAtual", page);
 
         if (!pages[page]) {
             return;
@@ -4817,8 +4818,17 @@ function entrarNoSistema() {
         sistema.style.display = "";
     }
 
-    renderDashboard();
+    const paginaAtual =
+        sessionStorage.getItem("paginaAtual") || "dashboard";
 
+    const botaoPagina =
+        document.querySelector(`[data-page="${paginaAtual}"]`);
+
+    if (botaoPagina) {
+        botaoPagina.click();
+    } else {
+        renderDashboard();
+    }
 }
 
 
