@@ -872,54 +872,130 @@ navItems.forEach(button => {
 });
 
          
-       async function renderRelatorios() {
+      async function renderRelatorios() {
 
     const movimentacoes = await pegarMovimentacoes();
     const servicos = await pegarServicos();
     const clientes = await pegarClientes();
 
+    const formatarMoeda = valor => {
+        return Number(valor || 0).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
+    };
+
+    const formatarData = data => {
+        if (!data) return "-";
+
+        const partes = data.split("-");
+
+        if (partes.length !== 3) {
+            return data;
+        }
+
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    };
+
+
+    // =================================================
+    // RESUMO FINANCEIRO
+    // =================================================
+
     const entradas = movimentacoes
         .filter(item => item.tipo === "Entrada")
         .reduce(
-            (total, item) => total + Number(item.valor || 0),
+            (total, item) =>
+                total + Number(item.valor || 0),
             0
         );
 
     const saidas = movimentacoes
         .filter(item => item.tipo === "Saída")
         .reduce(
-            (total, item) => total + Number(item.valor || 0),
+            (total, item) =>
+                total + Number(item.valor || 0),
             0
         );
 
     const saldo = entradas - saidas;
 
-    const servicosConcluidos = servicos
-        .filter(item => item.status === "Concluído")
-        .length;
 
-    const servicosPendentes = servicos
-        .filter(item => item.status !== "Concluído")
-        .length;
+    // =================================================
+    // SERVIÇOS
+    // =================================================
 
-    const formatarMoeda = valor => {
-        return Number(valor).toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL"
-        });
-    };
+    const totalServicos = servicos.length;
+
+    const servicosAgendados = servicos.filter(
+        item => item.status === "Agendado"
+    ).length;
+
+    const servicosPendentes = servicos.filter(
+        item => item.status === "Pendente"
+    ).length;
+
+    const servicosConcluidos = servicos.filter(
+        item => item.status === "Concluído"
+    ).length;
+
+    const servicosCancelados = servicos.filter(
+        item => item.status === "Cancelado"
+    ).length;
+
+
+    // =================================================
+    // TIPOS DE SERVIÇO
+    // =================================================
+
+    const tiposServicos = {};
+
+    servicos.forEach(servico => {
+
+        const tipo =
+            servico.tipo || "Não informado";
+
+        if (!tiposServicos[tipo]) {
+            tiposServicos[tipo] = 0;
+        }
+
+        tiposServicos[tipo]++;
+    });
+
+    const tiposOrdenados =
+        Object.entries(tiposServicos)
+            .sort((a, b) => b[1] - a[1]);
+
+
+    // =================================================
+    // TICKET MÉDIO
+    // =================================================
+
+    const quantidadeEntradas =
+        movimentacoes.filter(
+            item => item.tipo === "Entrada"
+        ).length;
+
+    const ticketMedio =
+        quantidadeEntradas > 0
+            ? entradas / quantidadeEntradas
+            : 0;
+
+
+    // =================================================
+    // RENDER
+    // =================================================
 
     pageContent.innerHTML = `
 
         <div class="relatorios-page">
 
-            <!-- ==========================================
-                 CABEÇALHO
-            =========================================== -->
+            <!-- CABEÇALHO -->
 
             <div class="relatorios-header">
 
                 <div>
+
                     <span class="relatorios-kicker">
                         ANÁLISE DO NEGÓCIO
                     </span>
@@ -929,9 +1005,10 @@ navItems.forEach(button => {
                     </h2>
 
                     <p>
-                        Acompanhe os principais indicadores
-                        financeiros e operacionais.
+                        Consulte o desempenho financeiro,
+                        operacional e o histórico do negócio.
                     </p>
+
                 </div>
 
                 <div class="relatorios-header-icon">
@@ -941,22 +1018,22 @@ navItems.forEach(button => {
             </div>
 
 
-            <!-- ==========================================
-                 RESUMO FINANCEIRO
-            =========================================== -->
+            <!-- RESUMO FINANCEIRO -->
 
             <div class="relatorios-section">
 
                 <div class="relatorios-section-title">
 
                     <div>
+
                         <h3>
-                            Resumo financeiro
+                            Desempenho financeiro
                         </h3>
 
                         <span>
-                            Visão geral das movimentações
+                            Resultado das movimentações registradas
                         </span>
+
                     </div>
 
                     <div class="relatorios-section-line"></div>
@@ -965,9 +1042,6 @@ navItems.forEach(button => {
 
 
                 <div class="relatorios-finance-grid">
-
-
-                    <!-- ENTRADAS -->
 
                     <div class="relatorio-finance-card entrada">
 
@@ -988,13 +1062,13 @@ navItems.forEach(button => {
                         </strong>
 
                         <small>
-                            Total recebido
+                            ${movimentacoes.filter(
+                                item => item.tipo === "Entrada"
+                            ).length} movimentações
                         </small>
 
                     </div>
 
-
-                    <!-- SAÍDAS -->
 
                     <div class="relatorio-finance-card saida">
 
@@ -1015,13 +1089,13 @@ navItems.forEach(button => {
                         </strong>
 
                         <small>
-                            Total de despesas
+                            ${movimentacoes.filter(
+                                item => item.tipo === "Saída"
+                            ).length} movimentações
                         </small>
 
                     </div>
 
-
-                    <!-- SALDO -->
 
                     <div class="relatorio-finance-card saldo">
 
@@ -1032,7 +1106,7 @@ navItems.forEach(button => {
                             </div>
 
                             <span>
-                                SALDO
+                                RESULTADO
                             </span>
 
                         </div>
@@ -1042,7 +1116,32 @@ navItems.forEach(button => {
                         </strong>
 
                         <small>
-                            Resultado financeiro
+                            Entradas menos saídas
+                        </small>
+
+                    </div>
+
+
+                    <div class="relatorio-finance-card">
+
+                        <div class="relatorio-card-top">
+
+                            <div class="relatorio-card-icon">
+                                $
+                            </div>
+
+                            <span>
+                                TICKET MÉDIO
+                            </span>
+
+                        </div>
+
+                        <strong>
+                            ${formatarMoeda(ticketMedio)}
+                        </strong>
+
+                        <small>
+                            Média por entrada
                         </small>
 
                     </div>
@@ -1052,22 +1151,22 @@ navItems.forEach(button => {
             </div>
 
 
-            <!-- ==========================================
-                 INDICADORES OPERACIONAIS
-            =========================================== -->
+            <!-- SERVIÇOS -->
 
             <div class="relatorios-section">
 
                 <div class="relatorios-section-title">
 
                     <div>
+
                         <h3>
-                            Indicadores operacionais
+                            Desempenho dos serviços
                         </h3>
 
                         <span>
-                            Desempenho dos serviços cadastrados
+                            Distribuição dos serviços por situação
                         </span>
+
                     </div>
 
                     <div class="relatorios-section-line"></div>
@@ -1077,21 +1176,20 @@ navItems.forEach(button => {
 
                 <div class="relatorios-indicadores">
 
-
                     <div class="relatorio-indicador">
 
-                        <div class="indicador-icon clientes">
-                            ♙
+                        <div class="indicador-icon servicos">
+                            #
                         </div>
 
                         <div class="indicador-info">
 
                             <span>
-                                Clientes
+                                Total
                             </span>
 
                             <strong>
-                                ${clientes.length}
+                                ${totalServicos}
                             </strong>
 
                         </div>
@@ -1101,18 +1199,39 @@ navItems.forEach(button => {
 
                     <div class="relatorio-indicador">
 
-                        <div class="indicador-icon servicos">
-                            ✓
+                        <div class="indicador-icon">
+                            ◷
                         </div>
 
                         <div class="indicador-info">
 
                             <span>
-                                Serviços
+                                Agendados
                             </span>
 
                             <strong>
-                                ${servicos.length}
+                                ${servicosAgendados}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="relatorio-indicador">
+
+                        <div class="indicador-icon pendentes">
+                            !
+                        </div>
+
+                        <div class="indicador-info">
+
+                            <span>
+                                Pendentes
+                            </span>
+
+                            <strong>
+                                ${servicosPendentes}
                             </strong>
 
                         </div>
@@ -1143,18 +1262,18 @@ navItems.forEach(button => {
 
                     <div class="relatorio-indicador">
 
-                        <div class="indicador-icon pendentes">
-                            !
+                        <div class="indicador-icon">
+                            ×
                         </div>
 
                         <div class="indicador-info">
 
                             <span>
-                                Pendentes
+                                Cancelados
                             </span>
 
                             <strong>
-                                ${servicosPendentes}
+                                ${servicosCancelados}
                             </strong>
 
                         </div>
@@ -1166,23 +1285,196 @@ navItems.forEach(button => {
             </div>
 
 
-            <!-- ==========================================
-                 MOVIMENTAÇÕES
-            =========================================== -->
+            <!-- TIPOS DE SERVIÇO -->
 
             <div class="relatorios-section">
 
                 <div class="relatorios-section-title">
 
                     <div>
+
                         <h3>
-                            Movimentações financeiras
+                            Serviços mais realizados
                         </h3>
 
                         <span>
-                            Histórico das entradas e saídas registradas
+                            Distribuição por tipo de serviço
                         </span>
+
                     </div>
+
+                    <div class="relatorios-section-line"></div>
+
+                </div>
+
+
+                <div class="relatorios-tipos">
+
+                    ${
+                        tiposOrdenados.length === 0
+
+                            ? `
+
+                                <div class="relatorios-empty">
+
+                                    <div>
+                                        ▤
+                                    </div>
+
+                                    <strong>
+                                        Nenhum serviço cadastrado
+                                    </strong>
+
+                                    <span>
+                                        Os tipos de serviço aparecerão
+                                        aqui conforme forem cadastrados.
+                                    </span>
+
+                                </div>
+
+                            `
+
+                            :
+
+                            tiposOrdenados
+                                .map(([tipo, quantidade], index) => {
+
+                                    const percentual =
+                                        totalServicos > 0
+                                            ? Math.round(
+                                                (quantidade /
+                                                    totalServicos) * 100
+                                            )
+                                            : 0;
+
+                                    return `
+
+                                        <div class="relatorio-tipo-item">
+
+                                            <div class="relatorio-tipo-info">
+
+                                                <span>
+                                                    ${tipo}
+                                                </span>
+
+                                                <strong>
+                                                    ${quantidade}
+                                                    ${
+                                                        quantidade === 1
+                                                            ? " serviço"
+                                                            : " serviços"
+                                                    }
+                                                </strong>
+
+                                            </div>
+
+                                            <div class="relatorio-tipo-bar">
+
+                                                <div
+                                                    class="relatorio-tipo-bar-fill"
+                                                    style="width: ${percentual}%"
+                                                ></div>
+
+                                            </div>
+
+                                            <small>
+                                                ${percentual}%
+                                            </small>
+
+                                        </div>
+
+                                    `;
+
+                                })
+                                .join("")
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- CLIENTES -->
+
+            <div class="relatorios-section">
+
+                <div class="relatorios-section-title">
+
+                    <div>
+
+                        <h3>
+                            Base de clientes
+                        </h3>
+
+                        <span>
+                            Informações gerais dos clientes cadastrados
+                        </span>
+
+                    </div>
+
+                    <div class="relatorios-section-line"></div>
+
+                </div>
+
+
+                <div class="relatorios-clientes-resumo">
+
+                    <div>
+
+                        <span>
+                            Clientes cadastrados
+                        </span>
+
+                        <strong>
+                            ${clientes.length}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Serviços por cliente
+                        </span>
+
+                        <strong>
+                            ${
+                                clientes.length > 0
+                                    ? (
+                                        totalServicos /
+                                        clientes.length
+                                    ).toFixed(1)
+                                    : "0,0"
+                            }
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- HISTÓRICO FINANCEIRO -->
+
+            <div class="relatorios-section">
+
+                <div class="relatorios-section-title">
+
+                    <div>
+
+                        <h3>
+                            Histórico financeiro
+                        </h3>
+
+                        <span>
+                            Últimas movimentações registradas
+                        </span>
+
+                    </div>
+
+                    <div class="relatorios-section-line"></div>
 
                 </div>
 
@@ -1249,79 +1541,78 @@ navItems.forEach(button => {
 
                                     `
 
-                                    : movimentacoes.map(item => `
+                                    :
 
-                                        <tr>
+                                    [...movimentacoes]
+                                        .sort((a, b) =>
+                                            (b.data || "")
+                                                .localeCompare(
+                                                    a.data || ""
+                                                )
+                                        )
+                                        .map(item => `
 
-                                            <td>
+                                            <tr>
 
-                                                <span class="relatorio-data">
+                                                <td>
 
-                                                    ${
-                                                        item.data
-                                                            ? item.data
-                                                                .split("-")
-                                                                .reverse()
-                                                                .join("/")
-                                                            : "-"
-                                                    }
+                                                    <span class="relatorio-data">
+                                                        ${formatarData(item.data)}
+                                                    </span>
 
-                                                </span>
-
-                                            </td>
-
-
-                                            <td>
-
-                                                <span class="relatorio-descricao">
-
-                                                    ${item.descricao || "-"}
-
-                                                </span>
-
-                                            </td>
+                                                </td>
 
 
-                                            <td>
+                                                <td>
 
-                                                <span class="relatorio-tipo ${
-                                                    item.tipo === "Entrada"
-                                                        ? "entrada"
-                                                        : "saida"
-                                                }">
+                                                    <span class="relatorio-descricao">
+                                                        ${item.descricao || "-"}
+                                                    </span>
 
-                                                    <span class="tipo-dot"></span>
-
-                                                    ${item.tipo}
-
-                                                </span>
-
-                                            </td>
+                                                </td>
 
 
-                                            <td>
+                                                <td>
 
-                                                <strong class="relatorio-valor ${
-                                                    item.tipo === "Entrada"
-                                                        ? "valor-entrada"
-                                                        : "valor-saida"
-                                                }">
-
-                                                    ${
+                                                    <span class="relatorio-tipo ${
                                                         item.tipo === "Entrada"
-                                                            ? "+"
-                                                            : "-"
-                                                    }
+                                                            ? "entrada"
+                                                            : "saida"
+                                                    }">
 
-                                                    ${formatarMoeda(item.valor)}
+                                                        <span class="tipo-dot"></span>
 
-                                                </strong>
+                                                        ${item.tipo}
 
-                                            </td>
+                                                    </span>
 
-                                        </tr>
+                                                </td>
 
-                                    `).join("")
+
+                                                <td>
+
+                                                    <strong class="relatorio-valor ${
+                                                        item.tipo === "Entrada"
+                                                            ? "valor-entrada"
+                                                            : "valor-saida"
+                                                    }">
+
+                                                        ${
+                                                            item.tipo === "Entrada"
+                                                                ? "+"
+                                                                : "-"
+                                                        }
+
+                                                        ${formatarMoeda(item.valor)}
+
+                                                    </strong>
+
+                                                </td>
+
+                                            </tr>
+
+                                        `)
+                                        .join("")
                             }
 
                         </tbody>
@@ -1333,6 +1624,7 @@ navItems.forEach(button => {
             </div>
 
         </div>
+
     `;
 }
     
