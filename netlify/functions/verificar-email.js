@@ -1,6 +1,7 @@
 const dns = require("dns").promises;
 
 exports.handler = async (event) => {
+
     if (event.httpMethod !== "POST") {
         return {
             statusCode: 405,
@@ -12,6 +13,7 @@ exports.handler = async (event) => {
     }
 
     try {
+
         const { email } = JSON.parse(event.body || "{}");
 
         if (!email) {
@@ -24,11 +26,13 @@ exports.handler = async (event) => {
             };
         }
 
-        const partes = email.trim().toLowerCase().split("@");
+        const emailNormalizado = email.trim().toLowerCase();
 
-        if (partes.length !== 2) {
+        const partes = emailNormalizado.split("@");
+
+        if (partes.length !== 2 || !partes[0] || !partes[1]) {
             return {
-                statusCode: 400,
+                statusCode: 200,
                 body: JSON.stringify({
                     valido: false,
                     mensagem: "Formato de e-mail inválido."
@@ -59,11 +63,14 @@ exports.handler = async (event) => {
         };
 
     } catch (erro) {
+
+        console.error("Erro ao verificar domínio:", erro);
+
         return {
             statusCode: 200,
             body: JSON.stringify({
                 valido: false,
-                mensagem: "O domínio informado não existe ou não possui configuração de e-mail."
+                mensagem: "Não foi possível verificar o domínio do e-mail."
             })
         };
     }

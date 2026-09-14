@@ -205,14 +205,15 @@ async function pegarClientes() {
 }
 
 
-async function salvarClientes(clientes) {
+async function salvarClientes(cliente) {
 
     const { error } = await supabaseClient
         .from("clientes")
-        .upsert(clientes);
+        .upsert(cliente);
 
-     if (error) {
-        console.error("Erro ao salvar clientes:", error);
+    if (error) {
+        console.error("Erro ao salvar cliente:", error);
+        alert("Erro ao salvar cliente.");
         return false;
     }
 
@@ -579,13 +580,14 @@ async function abrirFormularioCliente(id = null) {
                         </label>
 
                         <input
-                         type="email"
-                         id="cliente-email"
-                         placeholder="cliente@email.com"
-                         value="${cliente ? cliente.email : ""}"
-                         pattern="^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
-                        title="Informe um e-mail válido, como cliente@gmail.com ou contato@empresa.com.br"
-                        >
+                     type="email"
+                     id="cliente-email"
+                     placeholder="cliente@email.com"
+                     value="${cliente ? cliente.email : ""}"
+                     pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+                     title="Informe um e-mail válido, como cliente@gmail.com ou contato@empresa.com.br"
+                     required
+                    >
                     </div>
 
                 </div>
@@ -688,34 +690,46 @@ async function abrirFormularioCliente(id = null) {
             if (!nome || !telefone) {
 
                 alert("Nome e telefone são obrigatórios.");
-
+            
+            
     return;
 
 }
-
+        
 
 if (email) {
 
     try {
 
-        const resposta = await fetch(
-            "/.netlify/functions/verificar-email",
-            {
-                method: "POST",
+       const resposta = await fetch(
+    "/.netlify/functions/verificar-email",
+    {
+        method: "POST",
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+        headers: {
+            "Content-Type": "application/json"
+        },
 
-                body: JSON.stringify({
-                    email: email
-                })
-            }
-        );
+        body: JSON.stringify({
+            email: email
+        })
+    }
+);
 
+console.log("STATUS DA VERIFICAÇÃO:", resposta.status);
 
-        const resultado = await resposta.json();
+const textoResposta = await resposta.text();
 
+console.log("RESPOSTA DA VERIFICAÇÃO:", textoResposta);
+
+let resultado;
+
+try {
+    resultado = JSON.parse(textoResposta);
+} catch (erro) {
+    console.error("Resposta não é JSON:", textoResposta);
+    throw erro;
+}
 
         if (!resultado.valido) {
 
@@ -735,88 +749,45 @@ if (email) {
 
 }
 
-}
+
 
 
 const clientesAtuais = await pegarClientes();
 
+if (cliente) {
 
-            if (cliente) {
+    // EDITAR
+    const clienteAtualizado = {
+        id: cliente.id,
+        nome: nome,
+        telefone: telefone,
+        email: email,
+        endereco: endereco
+    };
 
-                // EDITAR
-                // Localiza o cliente pelo ID e substitui os dados
+    await salvarClientes(clienteAtualizado);
 
-                const indice = clientesAtuais.findIndex(
-                    clienteAtual => clienteAtual.id === cliente.id
-                );
+} else {
 
+    // NOVO CLIENTE
+    const novoCliente = {
+        nome: nome,
+        telefone: telefone,
+        email: email,
+        endereco: endereco
+    };
 
-                if (indice !== -1) {
-
-                    clientesAtuais[indice] = {
-
-                        ...clientesAtuais[indice],
-
-                        nome: nome,
-
-                        telefone: telefone,
-
-                        email: email,
-
-                        endereco: endereco
-
-                    };
-
-
-                    await salvarClientes(clientesAtuais);
-
-                }
-
-            } else {
-
-                // NOVO CLIENTE
-
-                clientesAtuais.push({
-
-                    id: Date.now(),
-
-                    nome: nome,
-
-                    telefone: telefone,
-
-                    email: email,
-
-                    endereco: endereco
-
-                });
-
-
-                await salvarClientes(clientesAtuais);
-
-            }
-
-
-            modal.remove();
-
-
-            renderClientes();
-
-        });
-
+    await salvarClientes(novoCliente);
 }
 
+modal.remove();
+renderClientes();
 
-// =====================================================
-// EDITAR
-// =====================================================
+    }
 
-function editarCliente(id) {
-
-    abrirFormularioCliente(id);
+});
 
 }
-
-
 // =====================================================
 // EXCLUIR
 // =====================================================
@@ -4889,16 +4860,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
 
             if (error) {
-
-    if (error) {
-
-      alert(error.message);
-
-       return;
-    }
-
-    return;
-}
+              alert(error.message);
+              return;
+            }
+        
             entrarNoSistema();
 
         }
