@@ -494,8 +494,10 @@ async function abrirFormularioCliente(id = null) {
     const clientes = await pegarClientes();
 
     const cliente = id
-        ? clientes.find(cliente => cliente.id === id)
-        : null;
+    ? clientes.find(
+        cliente => Number(cliente.id) === Number(id)
+    )
+    : null;
 
 
     const modal = document.createElement("div");
@@ -584,7 +586,7 @@ async function abrirFormularioCliente(id = null) {
                      id="cliente-email"
                      placeholder="cliente@email.com"
                      value="${cliente ? cliente.email : ""}"
-                     pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+                     pattern="^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
                      title="Informe um e-mail válido, como cliente@gmail.com ou contato@empresa.com.br"
                      required
                     >
@@ -749,10 +751,6 @@ try {
 
 }
 
-
-
-
-const clientesAtuais = await pegarClientes();
 
 if (cliente) {
 
