@@ -5648,10 +5648,10 @@ async function abrirPerfilUsuario() {
         usuario.user_metadata?.display_name || "";
 
     const modal = document.createElement("div");
-    modal.className = "modal-overlay";
+    modal.className = "modal-overlay perfil-modal-overlay";
 
     modal.innerHTML = `
-        <div class="modal">
+        <div class="modal perfil-modal">
             <div class="modal-header">
                 <div>
                     <h2>Meu perfil</h2>
