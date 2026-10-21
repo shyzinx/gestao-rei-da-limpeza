@@ -255,22 +255,22 @@
             </nav>
 
 
-            <div class="sidebar-footer">
+            <div class="user-avatar" id="perfil-avatar">
+            A
+        </div>
 
-                <div class="user-avatar">
-                    A
-                </div>
+        <div class="user-info">
+          <strong id="perfil-nome">Carregando...</strong>
+          <span id="perfil-email">Minha conta</span>
+        </div>
 
-                <div class="user-info">
-                    <strong>Administrador</strong>
-                    <span>Gestor</span>
-                </div>
-
-                <button class="logout-button" onclick="sairDaConta()" title="Sair">
-                  ⇥
-                 </button>
-
-            </div>
+      <button
+    class="logout-button"
+    onclick="sairDaConta()"
+    title="Sair"
+      >
+       ⇥
+      </button>
 
         </aside>
 
@@ -295,18 +295,22 @@
 
                     <div class="topbar-user">
 
-                        <div class="user-avatar">
-                            A
-                        </div>
+                       <button
+    type="button"
+    class="topbar-user"
+    id="abrir-perfil"
+    title="Editar perfil"
+    style="border: none; cursor: pointer; text-align: left;"
+>
+    <div class="user-avatar" id="perfil-avatar-topo">
+        A
+    </div>
 
-                        <div>
-                            <strong>Administrador</strong>
-                            <span>Gestor</span>
-                        </div>
-
-                    </div>
-
-                </div>
+    <div>
+        <strong id="perfil-nome-topo">Carregando...</strong>
+        <span>Meu perfil</span>
+    </div>
+</button>
 
             </header>
 

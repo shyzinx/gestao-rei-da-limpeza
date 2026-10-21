@@ -5561,6 +5561,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         
             entrarNoSistema();
+            atualizarPerfilUsuario();
 
         }
     );
@@ -5593,4 +5594,201 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await verificarSessao();
 
+});
+
+
+/* =====================================================
+   PERFIL DO USUÁRIO
+===================================================== */
+
+async function atualizarPerfilUsuario() {
+    const { data, error } =
+        await supabaseClient.auth.getUser();
+
+    if (error || !data.user) {
+        console.error("Erro ao carregar perfil:", error);
+        return;
+    }
+
+    const usuario = data.user;
+
+    const nome =
+        usuario.user_metadata?.display_name ||
+        usuario.email?.split("@")[0] ||
+        "Usuário";
+
+    const email = usuario.email || "";
+    const iniciais = nome
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(parte => parte.charAt(0))
+        .join("")
+        .toUpperCase();
+
+    document.querySelector("#perfil-nome").textContent = nome;
+    document.querySelector("#perfil-email").textContent = email;
+    document.querySelector("#perfil-avatar").textContent = iniciais;
+
+    document.querySelector("#perfil-nome-topo").textContent = nome;
+    document.querySelector("#perfil-avatar-topo").textContent = iniciais;
+}
+
+async function abrirPerfilUsuario() {
+    const { data, error } =
+        await supabaseClient.auth.getUser();
+
+    if (error || !data.user) {
+        alert("Não foi possível carregar seu perfil.");
+        return;
+    }
+
+    const usuario = data.user;
+    const nomeAtual =
+        usuario.user_metadata?.display_name || "";
+
+    const modal = document.createElement("div");
+    modal.className = "modal-overlay";
+
+    modal.innerHTML = `
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <h2>Meu perfil</h2>
+                    <p>Gerencie seus dados de acesso.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    aria-label="Fechar"
+                >
+                    ×
+                </button>
+            </div>
+
+            <form id="perfil-form">
+                <div class="form-group">
+                    <label for="perfil-editar-nome">Nome</label>
+                    <input
+                        type="text"
+                        id="perfil-editar-nome"
+                        maxlength="60"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input
+                        type="email"
+                        value="${usuario.email || ""}"
+                        disabled
+                    >
+                </div>
+
+                <div class="modal-actions">
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        id="cancelar-perfil"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="login-button"
+                    >
+                        Salvar alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const campoNome =
+        modal.querySelector("#perfil-editar-nome");
+
+    campoNome.value = nomeAtual;
+    campoNome.focus();
+
+    function fecharModal() {
+        modal.remove();
+    }
+
+    modal.querySelector(".modal-close")
+        .addEventListener("click", fecharModal);
+
+    modal.querySelector("#cancelar-perfil")
+        .addEventListener("click", fecharModal);
+
+    modal.addEventListener("click", event => {
+        if (event.target === modal) {
+            fecharModal();
+        }
+    });
+
+    modal.querySelector("#perfil-form")
+        .addEventListener("submit", async event => {
+            event.preventDefault();
+
+            const novoNome = campoNome.value.trim();
+
+            if (!novoNome) {
+                alert("Informe seu nome.");
+                return;
+            }
+
+            const botao = modal.querySelector(
+                'button[type="submit"]'
+            );
+
+            botao.disabled = true;
+            botao.textContent = "Salvando...";
+
+            const { error: erroAtualizacao } =
+                await supabaseClient.auth.updateUser({
+                    data: {
+                        display_name: novoNome
+                    }
+                });
+
+            if (erroAtualizacao) {
+                console.error(
+                    "Erro ao atualizar perfil:",
+                    erroAtualizacao
+                );
+
+                alert(
+                    "Não foi possível salvar seu nome: " +
+                    erroAtualizacao.message
+                );
+
+                botao.disabled = false;
+                botao.textContent = "Salvar alterações";
+                return;
+            }
+
+            await atualizarPerfilUsuario();
+
+            alert("Perfil atualizado com sucesso!");
+            fecharModal();
+        });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const botaoPerfil =
+        document.querySelector("#abrir-perfil");
+
+    if (botaoPerfil) {
+        botaoPerfil.addEventListener(
+            "click",
+            abrirPerfilUsuario
+        );
+    }
+
+    atualizarPerfilUsuario();
 });
