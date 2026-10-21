@@ -88,6 +88,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     .value
                     .trim();
 
+                    const nome =
+    document
+        .querySelector("#cadastro-nome")
+        .value
+        .trim();
+
+if (!nome) {
+    alert("Informe seu nome para criar a conta.");
+    return;
+}
+
             const password =
                 document
                     .querySelector("#cadastro-password")
@@ -108,11 +119,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }   
 
             const { error } =
-                await supabaseClient.auth.signUp({
-                    email: email,
-                    password: password
-                });
-
+             await supabaseClient.auth.signUp({
+             email: email,
+             password: password,
+             options: {
+             data: {
+                display_name: nome
+            }
+        }
+    });
 
             if (error) {
 
