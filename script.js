@@ -5720,8 +5720,25 @@ async function abrirPerfilUsuario() {
     campoNome.focus();
 
     function fecharModal() {
-        modal.remove();
+    document.removeEventListener("keydown", fecharComEsc);
+    modal.remove();
+}
+
+function fecharComEsc(event) {
+    if (event.key === "Escape") {
+        fecharModal();
     }
+}
+
+document.addEventListener("keydown", fecharComEsc);
+    function fecharComEsc(event) {
+    if (event.key === "Escape") {
+        fecharModal();
+        document.removeEventListener("keydown", fecharComEsc);
+    }
+}
+
+document.addEventListener("keydown", fecharComEsc);
 
     modal.querySelector(".modal-close")
         .addEventListener("click", fecharModal);
