@@ -5626,12 +5626,16 @@ async function atualizarPerfilUsuario() {
         .join("")
         .toUpperCase();
 
-    document.querySelector("#perfil-nome").textContent = nome;
-    document.querySelector("#perfil-email").textContent = email;
-    document.querySelector("#perfil-avatar").textContent = iniciais;
+        const nomeTopo = document.querySelector("#perfil-nome-topo");
+        const avatarTopo = document.querySelector("#perfil-avatar-topo");
 
-    document.querySelector("#perfil-nome-topo").textContent = nome;
-    document.querySelector("#perfil-avatar-topo").textContent = iniciais;
+        if (nomeTopo) {
+        nomeTopo.textContent = nome;
+        }
+
+        if (avatarTopo) {
+         avatarTopo.textContent = iniciais;
+        }
 }
 
 async function abrirPerfilUsuario() {
