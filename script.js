@@ -7,9 +7,8 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_PUBLISHABLE_KEY
 );
 
-// =====================================================
 // CADASTRO
-// =====================================================
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
