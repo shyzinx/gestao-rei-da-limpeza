@@ -68,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document
                 .querySelector(".login-divider")
                 .style.display = "flex";
-
             mostrarCadastro.style.display = "block";
 
         }
