@@ -767,34 +767,37 @@ try {
 }
 
 
-if (cliente) {
 
-    // EDITAR
+let salvou;
+
+if (cliente) {
     const clienteAtualizado = {
         id: cliente.id,
-        nome: nome,
-        telefone: telefone,
-        email: email,
-        endereco: endereco
+        nome,
+        telefone,
+        email,
+        endereco
     };
 
-    await salvarClientes(clienteAtualizado);
-
+    salvou = await salvarClientes(clienteAtualizado);
 } else {
-
-    // NOVO CLIENTE
     const novoCliente = {
-        nome: nome,
-        telefone: telefone,
-        email: email,
-        endereco: endereco
+        nome,
+        telefone,
+        email,
+        endereco
     };
 
-    await salvarClientes(novoCliente);
+    salvou = await salvarClientes(novoCliente);
+}
+
+if (!salvou) {
+    return;
 }
 
 modal.remove();
 renderClientes();
+
 
     }
 
@@ -5741,7 +5744,7 @@ document.addEventListener("keydown", fecharComEsc, true);
     modal.querySelector(".modal-close")
     .addEventListener("click", fecharModal);
 
-    modal.querySelector("#cancelar-perfil")
+modal.querySelector("#cancelar-perfil")
     .addEventListener("click", fecharModal);
 
     modal.querySelector("#perfil-form")
