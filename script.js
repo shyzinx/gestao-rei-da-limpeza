@@ -5719,8 +5719,9 @@ async function abrirPerfilUsuario() {
     campoNome.value = nomeAtual;
     campoNome.focus();
 
-    function fecharModal() {
-    document.removeEventListener("keydown", fecharComEsc);
+   
+function fecharModal() {
+    document.removeEventListener("keydown", fecharComEsc, true);
     modal.remove();
 }
 
@@ -5730,27 +5731,7 @@ function fecharComEsc(event) {
     }
 }
 
-document.addEventListener("keydown", fecharComEsc);
-    function fecharComEsc(event) {
-    if (event.key === "Escape") {
-        fecharModal();
-        document.removeEventListener("keydown", fecharComEsc);
-    }
-}
-
-document.addEventListener("keydown", fecharComEsc);
-
-    modal.querySelector(".modal-close")
-        .addEventListener("click", fecharModal);
-
-    modal.querySelector("#cancelar-perfil")
-        .addEventListener("click", fecharModal);
-
-    modal.addEventListener("click", event => {
-        if (event.target === modal) {
-            fecharModal();
-        }
-    });
+document.addEventListener("keydown", fecharComEsc, true);
 
     modal.querySelector("#perfil-form")
         .addEventListener("submit", async event => {
