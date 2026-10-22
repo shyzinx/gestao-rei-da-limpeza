@@ -5774,8 +5774,12 @@ async function abrirPerfilUsuario() {
 
             await atualizarPerfilUsuario();
 
-            alert("Perfil atualizado com sucesso!");
             fecharModal();
+            mostrarNotificacao(
+            "Perfil atualizado!",
+            "Seus dados foram salvos com sucesso.",
+             "sucesso"
+            );
         });
 }
 
@@ -5792,3 +5796,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     atualizarPerfilUsuario();
 });
+function mostrarNotificacao(titulo, mensagem, tipo = "sucesso") {
+    const notificacaoAnterior = document.querySelector(".notificacao-app");
+
+    if (notificacaoAnterior) {
+        notificacaoAnterior.remove();
+    }
+
+    const notificacao = document.createElement("div");
+    notificacao.className = `notificacao-app notificacao-${tipo}`;
+
+    const icone = tipo === "sucesso" ? "✓" : "!";
+    
+    notificacao.innerHTML = `
+        <div class="notificacao-icone">${icone}</div>
+        <div class="notificacao-conteudo">
+            <strong>${titulo}</strong>
+            <span>${mensagem}</span>
+        </div>
+        <button type="button" class="notificacao-fechar" aria-label="Fechar">
+            &times;
+        </button>
+    `;
+
+    document.body.appendChild(notificacao);
+
+    notificacao.querySelector(".notificacao-fechar").addEventListener("click", () => {
+        notificacao.remove();
+    });
+
+    setTimeout(() => {
+        notificacao.remove();
+    }, 4000);
+}

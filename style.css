@@ -4857,3 +4857,100 @@ button.topbar-user:hover {
     font-size: 12px;
     font-weight: 800;
 }
+
+/* Notificações personalizadas do sistema */
+
+.notificacao-app {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: min(360px, calc(100vw - 32px));
+    padding: 16px;
+
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.16);
+
+    font-family: inherit;
+
+    animation: notificacao-entrar 0.3s ease-out;
+}
+
+.notificacao-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    background: #dcfce7;
+    color: #15803d;
+
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.notificacao-conteudo {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.notificacao-conteudo strong {
+    color: #1e293b;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.notificacao-conteudo span {
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.notificacao-fechar {
+    align-self: flex-start;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.notificacao-fechar:hover {
+    color: #334155;
+}
+
+@keyframes notificacao-entrar {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .notificacao-app {
+        top: 12px;
+        right: 12px;
+        width: calc(100vw - 24px);
+    }
+}
