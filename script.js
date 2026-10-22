@@ -5730,6 +5730,11 @@ function fecharComEsc(event) {
         fecharModal();
     }
 }
+modal.addEventListener("click", event => {
+    if (event.target === modal) {
+        fecharModal();
+    }
+});
 
 document.addEventListener("keydown", fecharComEsc, true);
 
