@@ -293,12 +293,36 @@ button {
 
 .sidebar-footer {
     padding: 15px;
-
     border-top: 1px solid rgba(255, 255, 255, 0.07);
-
     display: flex;
     align-items: center;
+    justify-content: flex-end;
 }
+
+/* Botão para sair da conta */
+
+.sidebar-footer .logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-left: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.sidebar-footer .logout-button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+
 
 .user-avatar {
     width: 36px;
