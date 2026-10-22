@@ -5738,6 +5738,12 @@ modal.addEventListener("click", event => {
 
 document.addEventListener("keydown", fecharComEsc, true);
 
+    modal.querySelector(".modal-close")
+    .addEventListener("click", fecharModal);
+
+    modal.querySelector("#cancelar-perfil")
+    .addEventListener("click", fecharModal);
+
     modal.querySelector("#perfil-form")
         .addEventListener("submit", async event => {
             event.preventDefault();
